@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Footer from "./components/Footer";
 import PostProject from "./pages/PostProject";
 import { ToastContainer, toast } from "react-toastify";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -15,7 +16,14 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/postproject" element={<PostProject />} />
+        <Route
+          path="/postproject"
+          element={
+            <ProtectedRoute>
+              <PostProject />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </div>
   );

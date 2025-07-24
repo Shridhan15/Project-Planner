@@ -43,5 +43,14 @@ const addProject = async (req, res) => {
 
 }
 
+const getProjects = async (req, res) => {
+    try {   
+        const projects = await Project.find().populate("author", "name email");
+        res.json({ success: true, projects });
+    }catch (error) {
+        console.error("Error fetching projects:", error);
+        res.json({ success: false, message: "Internal server error" });
+    }
+}
 
-export { addProject }
+export { addProject, getProjects }

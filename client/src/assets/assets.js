@@ -6,6 +6,7 @@ import coursemate from './coursemate.png';
 import event from './event.png';
 import lostfound from './lostfound.png';
 import resume from './resume.png';
+import default_image from './default.png'
 
 const dummyProjects = [
   {
@@ -72,4 +73,5 @@ export default dummyProjects;
 export const assets = {
   logo,
   profile_icon,
+  default_image,
 }

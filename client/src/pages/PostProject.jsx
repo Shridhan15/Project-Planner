@@ -11,7 +11,7 @@ const PostProject = () => {
    
   const [image, setImage] = useState(false);
 
-  const { backendUrl, token } = useContext(ProjectContext);
+  const { backendUrl, token,navigate } = useContext(ProjectContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +34,17 @@ const PostProject = () => {
 
       const response = await axios.post(backendUrl+'/api/project/add', formData, {headers:{token}})
       console.log("response", response.data);
+      if (response.data.success) {
+        toast.success("Project submitted successfully!");
+        setTitle("");
+        setDesc("");
+        setSkillsRequired("");
+        setTechStack("");
+        setImage(null); // Reset image state
+        navigate('/')
+      } else {
+        toast.error(response.data.message || "Failed to submit project.");
+      }
 
        
 

@@ -115,8 +115,8 @@ const Login = () => {
       <div>
         <button
           type="submit"
-          className={`cursor-pointer ${
-            currentState === "Login" ? "bg-blue-500" : "bg-green-500"
+          className={`cursor-pointer  ${
+            currentState === "Login" ? "bg-blue-500 hover:bg-blue-700" : "bg-green-500 hover:bg-green-700"
           } text-white px-4 py-2 rounded-lg`}
         >
           {currentState}

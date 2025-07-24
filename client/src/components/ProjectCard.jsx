@@ -1,4 +1,5 @@
 import React from "react";
+import { assets } from "../assets/assets";
 
 const ProjectCard = ({ project }) => {
   
@@ -6,7 +7,7 @@ const ProjectCard = ({ project }) => {
     <form className="bg-white rounded-xl shadow-md p-4 hover:shadow-xl transition duration-300">
       <img
         className="w-full h-48 object-cover rounded-md mb-4"
-        src={project.image}
+        src={project.image || assets.default_image}
         alt={project.title}
       />
 
@@ -23,7 +24,7 @@ const ProjectCard = ({ project }) => {
         <span className="text-green-700">{project.techStack.join(", ")}</span>
       </div>
 
-      <p className="text-sm text-gray-500 mb-4">Posted by: <span className="font-medium">{project.author}</span></p>
+      <p className="text-sm text-gray-500 mb-4">Posted by: <span className="font-medium">{project.author.name}</span></p>
 
       <button
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
