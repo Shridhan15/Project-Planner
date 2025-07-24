@@ -1,9 +1,10 @@
-import React from 'react';
-import dummyProjects from '../assets/assets';
+import React, { useContext } from 'react';
 import ProjectCard from '../components/ProjectCard';
 import { Link } from 'react-router-dom';
+import { ProjectContext } from '../../context/ProjectContext';
 
 const Home = () => {
+  const { projectsData } = useContext(ProjectContext);
   return (
     <div className="bg-gray-50 min-h-screen">
       
@@ -19,7 +20,7 @@ const Home = () => {
 
       
       <div className="grid mt-2 gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3  pb-6 max-w-7xl mx-auto">
-        {dummyProjects.map((project) => (
+        {projectsData.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
       </div>

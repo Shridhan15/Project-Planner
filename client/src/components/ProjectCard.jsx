@@ -1,8 +1,9 @@
 import React from "react";
 
 const ProjectCard = ({ project }) => {
+  
   return (
-    <div className="bg-white rounded-xl shadow-md p-4 hover:shadow-xl transition duration-300">
+    <form className="bg-white rounded-xl shadow-md p-4 hover:shadow-xl transition duration-300">
       <img
         className="w-full h-48 object-cover rounded-md mb-4"
         src={project.image}
@@ -30,7 +31,7 @@ const ProjectCard = ({ project }) => {
       >
         Request to Join
       </button>
-    </div>
+    </form>
   );
 };
 
