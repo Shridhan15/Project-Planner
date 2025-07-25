@@ -11,7 +11,8 @@ const ProjectCard = ({ project }) => {
     e.preventDefault();
     if (!token) {
       toast.error("Create account or Login first");
-      return
+      navigate("/login");
+      return;
     }
 
     try {

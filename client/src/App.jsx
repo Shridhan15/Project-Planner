@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import PostProject from "./pages/PostProject";
 import { ToastContainer, toast } from "react-toastify";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </div>
   );

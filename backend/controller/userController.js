@@ -59,4 +59,38 @@ const loginUser= async(req,res)=>{
     }
 }
 
-export { registerUser, loginUser };
+const fetchUserProfile= async(req,res)=>{
+
+    try {
+        const user=await User.findById(req.user._id)
+        if(!user){
+            return res.json({ success: false, message: "User not found" });
+        }
+        res.json({ success: true, user });
+    } catch (error) {
+        console.error("Error fetching user profile:", error);
+        res.json({ success: false, message: "Internal server error" });
+        
+    }
+}
+
+const updateProfile= async(req, res) => {
+    try {
+
+        const updates= req.body;
+
+        const updateUser= await User.findByIdAndUpdate(
+            req.user._id,
+            { $set: updates },
+            { new: true }
+        );
+
+        res.json({ success: true, user: updateUser });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        res.json({ success: false, message: "Internal server error" });
+        
+    }
+}
+
+export { registerUser, loginUser, fetchUserProfile,updateProfile };

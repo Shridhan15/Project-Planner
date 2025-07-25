@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  
+
   skills: {
     type: [String],
     default: [],
@@ -19,6 +19,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  mobileNumber: {
+    type: String,
+    default: '',
+  },
+  yearOfStudy: { type: String, default: '' },
+  technologiesKnown: [{ type: String }],
+
   profileImage: {
     type: String, // URL (e.g., Cloudinary)
   },
