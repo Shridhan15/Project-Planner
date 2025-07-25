@@ -11,7 +11,7 @@ const ProjectContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [token, setToken] = useState(() => localStorage.getItem("token") || "");
-  const [projectsData, setProjectsData] = useState(dummyProjects);
+  const [projectsData, setProjectsData] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true); // <- Add this

@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import Project from "../models/Project.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
@@ -93,4 +94,22 @@ const updateProfile= async(req, res) => {
     }
 }
 
-export { registerUser, loginUser, fetchUserProfile,updateProfile };
+
+const getUserProjects= async(req,res)=>{
+    try {
+
+        const userId= req.user._id;
+        const userProjects= await Project.find({ author: userId }).populate("author", "name email");
+        if (!userProjects) {
+            return res.json({ success: false, message: "No projects found for this user" });
+        }
+        res.json({ success: true, projects: userProjects });
+        
+    } catch (error) {
+        console.error("Error fetching user projects:", error);
+        res.json({ success: false, message: "Internal server error" });
+        
+    }
+}
+
+export { registerUser, loginUser, fetchUserProfile,updateProfile,getUserProjects };
