@@ -6,7 +6,7 @@ import { ProjectContext } from "../../context/ProjectContext";
 
 const Navbar = () => {
   const { token, setToken, navigate } = useContext(ProjectContext);
-  console.log("Token in Navbar:", token);
+  // console.log("Token in Navbar:", token);
 
   const logout = () => {
     navigate("/login");

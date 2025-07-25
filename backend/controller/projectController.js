@@ -2,6 +2,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import Project from "../models/Project.js";
 import User from "../models/User.js";
+import { sendMail } from "../config/sendMail.js";
 
 
 const addProject = async (req, res) => {
@@ -44,13 +45,56 @@ const addProject = async (req, res) => {
 }
 
 const getProjects = async (req, res) => {
-    try {   
+    try {
         const projects = await Project.find().populate("author", "name email");
         res.json({ success: true, projects });
-    }catch (error) {
+    } catch (error) {
         console.error("Error fetching projects:", error);
         res.json({ success: false, message: "Internal server error" });
     }
 }
 
-export { addProject, getProjects }
+
+const sendJoinRequest = async (req, res) => {
+    
+    try {
+        const { projectId } = req.body;
+        const project = await Project.findById(projectId).populate("author", "name email");
+        if (!project) {
+            return res.status(404).json({ success: false, message: "Project not found" });
+        }
+
+        const author = project.author;
+        const sender = req.user;
+
+        if (!sender) {
+            return res.status(401).json({ success: false, message: "Sender not authenticated" });
+        }
+
+        const subject = `🚀 Join Request for Your Project: ${project.title}`;
+        const html = `
+      <p>Hi ${author.name},</p>
+      <p><strong>${sender.name}</strong> is interested in joining your project <strong>${project.title}</strong>.</p>
+      <p><strong>Sender Details:</strong></p>
+      <ul>
+        <li>Email: ${sender.email}</li>
+      </ul>
+      <p>You can reply directly to this email to connect with them.</p>
+      <p>Cheers,<br/>Project Partner Team</p>
+    `;
+
+        await sendMail(author.email, subject, html);
+        res.json({ success: true, message: "Join request email sent!" });
+
+    } catch (error) {
+        console.error("Error sending join request:", error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
+
+
+
+
+
+export { addProject, getProjects, sendJoinRequest };

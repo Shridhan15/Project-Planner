@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
 import { ProjectContext } from "../../context/ProjectContext";
+import { toast } from "react-toastify";
 
 const Home = () => {
   const { projectsData, getAllProjects, navigate, isAuthenticated } =
@@ -10,8 +11,17 @@ const Home = () => {
     getAllProjects();
   }, []);
 
-  const handleClick = () => {
-    navigate(isAuthenticated ? "/postproject" : "/login");
+  const handleClick = (e) => {
+    e.preventDefault();
+    if (isAuthenticated) {
+      navigate("/postproject");
+      return;
+    } else {
+      toast.info("Please create account or login to post a project");
+      navigate("/login");
+    }
+
+    // navigate(isAuthenticated ? "/postproject" : "/login");
   };
 
   return (
