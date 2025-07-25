@@ -10,4 +10,5 @@ userRouter.post('/login', loginValidator, loginUser);
 userRouter.get('/profile',authUser,fetchUserProfile)
 userRouter.put('/update-profile',authUser,updateProfile);
 
+
 export default userRouter;

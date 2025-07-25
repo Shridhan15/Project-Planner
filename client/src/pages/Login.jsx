@@ -67,10 +67,40 @@ const Login = () => {
       onSubmit={onSubmitHandler}
       className="flex flex-col items-center justify-center gap-4 p-4 w-full max-w-md mx-auto mt-20 bg-gray-100 shadow-lg rounded-lg"
     >
+      {/* <div className="cursor-pointer text-blue-500 hover:underline font-light">
+        {currentState === "Login" ? (
+          <p onClick={() => setCurrentState("Sign Up")}>Sign Up</p>
+        ) : (
+          <p onClick={() => setCurrentState("Login")}>
+            Log In
+          </p>
+        )}
+      </div>
       <div className="inline-flex items-center gap-2 mb-2 mt-10">
         <p className="prata-regular text-3xl">{currentState} </p>
         <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
-      </div>
+      </div> */}
+
+      <p className="font-medium text-2xl">
+        <span
+          className={`cursor-pointer text-blue-500 hover:underline ${
+            currentState === "Sign Up" ? "text-green-400" : ""
+          }`}
+          onClick={() => setCurrentState("Sign Up")}
+        >
+          Sign Up
+        </span>{" "}
+        /{" "}
+        <span
+          className={`cursor-pointer text-blue-500 hover:underline ${
+            currentState === "Login" ? "text-green-400" : ""
+          }`}
+          onClick={() => setCurrentState("Login")}
+        >
+          Login
+        </span>{" "}
+      </p>
+
       {currentState === "Login" ? (
         ""
       ) : (
@@ -102,21 +132,13 @@ const Login = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
 
-      <div className="cursor-pointer text-blue-500 hover:underline font-light">
-        {currentState === "Login" ? (
-          <p onClick={() => setCurrentState("Sign Up")}>Create an account</p>
-        ) : (
-          <p onClick={() => setCurrentState("Login")}>
-            Already have an account?
-          </p>
-        )}
-      </div>
-
       <div>
         <button
           type="submit"
           className={`cursor-pointer  ${
-            currentState === "Login" ? "bg-blue-500 hover:bg-blue-700" : "bg-green-500 hover:bg-green-700"
+            currentState === "Login"
+              ? "bg-blue-500 hover:bg-blue-700"
+              : "bg-green-500 hover:bg-green-700"
           } text-white px-4 py-2 rounded-lg`}
         >
           {currentState}

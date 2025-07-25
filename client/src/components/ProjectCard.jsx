@@ -1,11 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { assets } from "../assets/assets";
 import { ProjectContext } from "../../context/ProjectContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 const ProjectCard = ({ project }) => {
-  const { token, navigate, backendUrl } = useContext(ProjectContext);
+  const { token, navigate, backendUrl, userProfile, fetchUserProfile } =
+    useContext(ProjectContext);
+  const [isClosed, setIsClosed] = useState(false);
+  // fetchUserProfile(); // Ensure user profile is fetched before rendering
+  console.log("User profile in ProjectCard:", userProfile);
+  console.log("Project in ProjectCard:", project);
 
   const handleRequestJoin = async (e) => {
     e.preventDefault();
@@ -30,8 +35,30 @@ const ProjectCard = ({ project }) => {
     }
   };
 
+  const handleCloseProject = async (projectId) => {
+    try {
+      const response = await axios.put(
+        `${backendUrl}/api/project/close-project/${projectId}`,
+        {},
+        { headers: { token } }
+      );
+      if (response.data.success) {
+        toast.success("Project closed successfully");
+        fetchUserProfile();
+      }
+    } catch (error) {
+      console.error("Error closing project:", error);
+    }
+  };
+
   return (
-    <form className="bg-white rounded-xl shadow-md p-4 hover:shadow-xl transition duration-300">
+    <form
+      className={`bg-white rounded-xl shadow-md p-4 hover:shadow-xl hover:scale-105 transition duration-300 ${
+        project.status === "closed"
+          ? "backdrop-blur-sm opacity-50 pointer-events-none"
+          : ""
+      }`}
+    >
       <img
         className="w-full h-48 object-cover rounded-md mb-4"
         src={project.image || assets.default_image}
@@ -59,12 +86,29 @@ const ProjectCard = ({ project }) => {
         Posted by: <span className="font-medium">{project.author.name}</span>
       </p>
 
-      <button
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
-        onClick={handleRequestJoin}
-      >
-        Request to Join
-      </button>
+      {project.status === "open" &&
+        project?.author?._id &&
+        userProfile?._id &&
+        project.author._id != userProfile._id && (
+            <button
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
+              onClick={handleRequestJoin}
+            >
+              Request to Join
+            </button>
+          )}
+
+      {project?.author?._id &&
+        userProfile?._id &&
+        project.author._id === userProfile._id &&
+        project.status === "open" && (
+          <button
+            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition cursor-pointer ml-2"
+            onClick={() => handleCloseProject(project._id)}
+          >
+            Close Project
+          </button>
+        )}
     </form>
   );
 };

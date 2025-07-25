@@ -92,7 +92,8 @@ const fetchUserProfile = async () => {
     logout,
     userProfile,
     setUserProfile,
-    loadingProfile ,
+    loadingProfile,
+    fetchUserProfile,
   };
 
   return (

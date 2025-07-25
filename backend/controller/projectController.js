@@ -93,8 +93,27 @@ const sendJoinRequest = async (req, res) => {
 };
 
 
+const closeProject= async(req,res)=>{
+
+    try {
+
+        const {projectId}=req.params;
+        if(!projectId) {
+            return res.json({ success: false, message: "Project ID is required" });
+        }
+
+        await Project.findByIdAndUpdate(projectId, { status: 'closed' });
+        res.json({ success: true, message: "Project closed successfully" });
+        
+    } catch (error) {
+        console.error("Error closing project:", error);
+        res.json({ success: false, message: "Internal server error" });
+        
+    }
+}
 
 
 
 
-export { addProject, getProjects, sendJoinRequest };
+
+export { addProject, getProjects, sendJoinRequest,closeProject };
