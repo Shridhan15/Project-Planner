@@ -3,13 +3,14 @@ import Project from "../models/Project.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
+import { v2 as cloudinary } from "cloudinary";
 
-const registerUser= async(req,res)=>{
+const registerUser = async (req, res) => {
 
-    const errors= validationResult(req);
-    if(!errors.isEmpty()){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
         return res.json({ success: false, errors: errors.array() });
-    }   
+    }
 
     const { name, email, password } = req.body;
 
@@ -29,10 +30,10 @@ const registerUser= async(req,res)=>{
     } catch (error) {
         console.error("Error registering user:", error);
         res.json({ success: false, message: "Internal server error" });
-    }   
+    }
 }
 
-const loginUser= async(req,res)=>{
+const loginUser = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.json({ success: false, errors: errors.array() });
@@ -60,56 +61,72 @@ const loginUser= async(req,res)=>{
     }
 }
 
-const fetchUserProfile= async(req,res)=>{
+const fetchUserProfile = async (req, res) => {
 
     try {
-        const user=await User.findById(req.user._id)
-        if(!user){
+        const user = await User.findById(req.user._id)
+        if (!user) {
             return res.json({ success: false, message: "User not found" });
         }
         res.json({ success: true, user });
     } catch (error) {
         console.error("Error fetching user profile:", error);
         res.json({ success: false, message: "Internal server error" });
-        
+
     }
 }
 
-const updateProfile= async(req, res) => {
+const updateProfile = async (req, res) => {
     try {
 
-        const updates= req.body;
+        const { name, email, mobileNumber, yearOfStudy, skills, technologiesKnown } = req.body
 
-        const updateUser= await User.findByIdAndUpdate(
-            req.user._id,
-            { $set: updates },
-            { new: true }
-        );
+        if (!name || !email) {
+            res.json({ success: false, message: "Data Missing" })
+        }
 
-        res.json({ success: true, user: updateUser });
+
+        const profileImage = req.file
+        let imageUrl = ""
+
+
+        await User.findByIdAndUpdate(req.user._id, { name, email, mobileNumber, yearOfStudy, skills, technologiesKnown })
+        if (profileImage) {
+            const result = await cloudinary.uploader.upload(profileImage.path, {
+                resource_type: "image",
+            });
+            imageUrl = result.secure_url;
+            await User.findByIdAndUpdate(req.user._id, { profileImage: imageUrl })
+        }
+ 
+  
+        res.json({ success: true, message: "Profile Updated" });
     } catch (error) {
         console.error("Error updating profile:", error);
         res.json({ success: false, message: "Internal server error" });
-        
+
     }
 }
 
 
-const getUserProjects= async(req,res)=>{
+const getUserProjects = async (req, res) => {
     try {
 
-        const userId= req.user._id;
-        const userProjects= await Project.find({ author: userId }).populate("author", "name email");
+        const userId = req.user._id;
+        const userProjects = await Project.find({ author: userId }).populate("author", "name email");
         if (!userProjects) {
             return res.json({ success: false, message: "No projects found for this user" });
         }
         res.json({ success: true, projects: userProjects });
-        
+
     } catch (error) {
         console.error("Error fetching user projects:", error);
         res.json({ success: false, message: "Internal server error" });
-        
+
     }
 }
 
-export { registerUser, loginUser, fetchUserProfile,updateProfile,getUserProjects };
+
+
+
+export { registerUser, loginUser, fetchUserProfile, updateProfile, getUserProjects };

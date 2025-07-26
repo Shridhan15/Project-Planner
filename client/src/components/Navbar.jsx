@@ -5,7 +5,7 @@ import { useContext } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
 
 const Navbar = () => {
-  const { token, setToken, navigate } = useContext(ProjectContext);
+  const { token, setToken, navigate, userProfile } = useContext(ProjectContext);
   // console.log("Token in Navbar:", token);
 
   const logout = () => {
@@ -24,7 +24,7 @@ const Navbar = () => {
         </div>
 
         <div className="group relative">
-          <img className="rounded-full w-8 mr-4" src={assets.profile_icon} alt="" />
+          <img className="rounded-full w-15 mr-4" src={userProfile?.profileImage || assets.profile_icon} alt="" />
           <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 ">
             <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
               <Link to="/profile" className="cursor-pointer hover:text-black">

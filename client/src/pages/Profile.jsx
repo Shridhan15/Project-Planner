@@ -50,7 +50,7 @@ const Profile = () => {
           {/* Profile Section */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-6 bg-gray-50 p-6 rounded-lg shadow-md">
             <img
-              src={userProfile.profilePicture || assets.profile_icon}
+              src={userProfile.profileImage || assets.profile_icon}
               alt="Profile"
               className="w-24 h-24 rounded-full border-2 border-gray-300 shadow-sm object-cover"
             />
@@ -63,6 +63,12 @@ const Profile = () => {
                 Joined on {new Date(userProfile.createdAt).toLocaleDateString()}
               </p>
             </div>
+
+            <button
+            onClick={()=>navigate('/edit-profile')}
+             className=" ml-[250px] ring-1 cursor-pointer ring-gray-300 hover:ring-gray-400 focus:ring-gray-500 rounded-md px-4 py-2">
+              Edit
+            </button>
           </div>
 
           {/* Projects Section */}

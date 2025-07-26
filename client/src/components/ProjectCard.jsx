@@ -31,6 +31,7 @@ const ProjectCard = ({ project }) => {
         toast.success("Request sent to author via Email");
       }
     } catch (error) {
+      toast.error(error.message)
       console.error("Error sending join request:", error);
     }
   };

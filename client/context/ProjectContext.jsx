@@ -16,7 +16,6 @@ const ProjectContextProvider = (props) => {
   const [userProfile, setUserProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true); // <- Add this
 
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,36 +46,38 @@ const ProjectContextProvider = (props) => {
     }
   };
 
-const fetchUserProfile = async () => {
-  if (!token) {
-    console.error("No token found, cannot fetch user profile.");
-    setLoadingProfile(false); // Even if token is missing, stop loading
-    return;
-  }
-
-  try {
-    const response = await axios.get(`${backendUrl}/api/user/profile`, {
-      headers: { token },
-    });
-
-    if (response.data.success) {
-      setUserProfile(response.data.user);
+  const fetchUserProfile = async () => {
+    if (!token) {
+      console.error("No token found, cannot fetch user profile.");
+      setLoadingProfile(false); // Even if token is missing, stop loading
+      return;
     }
-  } catch (error) {
-    console.error("Error fetching user profile:", error);
-    toast.error("Failed to fetch user profile. Please try again later.");
-  } finally {
-    setLoadingProfile(false); // ✅ Always stop loading
-  }
-};
+
+    try {
+      const response = await axios.get(`${backendUrl}/api/user/profile`, {
+        headers: { token },
+      });
+
+      if (response.data.success) {
+        setUserProfile(response.data.user);
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      toast.error("Failed to fetch user profile. Please try again later.");
+    } finally {
+      setLoadingProfile(false); // ✅ Always stop loading
+    }
+  };
   useEffect(() => {
     if (token) {
       fetchUserProfile();
     } else {
-      setLoadingProfile(false); 
+      setLoadingProfile(false);
     }
   }, [token]);
-
+  useEffect(() => {
+    getAllProjects();
+  }, []);
 
   const value = {
     backendUrl,

@@ -8,6 +8,7 @@ import PostProject from "./pages/PostProject";
 import { ToastContainer, toast } from "react-toastify";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile.jsx";
 
 const App = () => {
   return (
@@ -25,7 +26,15 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/edit-profile" element={<EditProfile />} />
       </Routes>
     </div>
   );
