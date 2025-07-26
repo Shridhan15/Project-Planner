@@ -4,8 +4,13 @@ import { ProjectContext } from "../../context/ProjectContext";
 import { toast } from "react-toastify";
 
 const Home = () => {
-  const { projectsData, getAllProjects, navigate, isAuthenticated } =
-    useContext(ProjectContext);
+  const {
+    projectsData,
+    filteredProjects,
+    getAllProjects,
+    navigate,
+    isAuthenticated,
+  } = useContext(ProjectContext);
 
   useEffect(() => {
     getAllProjects();
@@ -45,15 +50,21 @@ const Home = () => {
 
       {/* Projects Grid */}
       <div className="max-w-7xl mx-auto px-4 py-10">
-        {projectsData.length > 0 ? (
+        {filteredProjects.length > 0 ? (
           <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-            {projectsData
+            {filteredProjects
               .filter((project) => project && project._id)
               .map((project) => (
                 <ProjectCard key={project._id} project={project} />
               ))}
           </div>
+        ) : projectsData.length > 0 ? (
+          // Shown when search has no matches
+          <div className="text-center text-gray-600 text-lg mt-10">
+            No matching projects found.
+          </div>
         ) : (
+          //Shown initially when projects are still loading
           <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, index) => (
               <div

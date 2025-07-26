@@ -14,7 +14,8 @@ const ProjectContextProvider = (props) => {
   const [projectsData, setProjectsData] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
-  const [loadingProfile, setLoadingProfile] = useState(true); // <- Add this
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [filteredProjects, setFilteredProjects] = useState([]);
 
   const navigate = useNavigate();
 
@@ -25,11 +26,21 @@ const ProjectContextProvider = (props) => {
 
   const getAllProjects = async () => {
     try {
-      const respose = await axios.get(backendUrl + "/api/project/getprojects");
-      if (respose.data.success) {
-        setProjectsData(respose.data.projects);
+      const response = await axios.get(backendUrl + "/api/project/getprojects");
+      if (response.data.success) {
+        const sortedProjects = response.data.projects.sort((a, b) => {
+          const statusA = a.status?.trim().toLowerCase();
+          const statusB = b.status?.trim().toLowerCase();
+
+          if (statusA === statusB) return 0;
+          if (statusA === "open") return -1;
+          if (statusB === "open") return 1;
+          return 0;
+        });
+
+        setProjectsData(sortedProjects);
       } else {
-        console.error("Failed to fetch projects:", respose.data.message);
+        console.error("Failed to fetch projects:", response.data.message);
       }
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -69,6 +80,10 @@ const ProjectContextProvider = (props) => {
     getAllProjects();
   }, []);
 
+  useEffect(() => {
+    setFilteredProjects(projectsData);
+  }, [projectsData]);
+
   const value = {
     backendUrl,
     token,
@@ -79,7 +94,8 @@ const ProjectContextProvider = (props) => {
     getAllProjects,
     isAuthenticated,
     setIsAuthenticated,
-
+    setFilteredProjects,
+    filteredProjects,
     userProfile,
     setUserProfile,
     loadingProfile,

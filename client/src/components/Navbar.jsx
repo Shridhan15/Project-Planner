@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { assets } from "../assets/assets";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
-  const { token, setToken, navigate, userProfile, setUserProfile } =
-    useContext(ProjectContext);
+  const {
+    token,
+    setToken,
+    navigate,
+    userProfile,
+    setUserProfile,
+    projectsData,
+    setFilteredProjects,
+  } = useContext(ProjectContext);
   // console.log("Token in Navbar:", token);
+  const location = useLocation();
 
   const logout = () => {
     setUserProfile(null);
@@ -15,6 +24,31 @@ const Navbar = () => {
     setToken("");
     navigate("/login");
   };
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleSearch = (e) => {
+    const keyword = e.target.value.toLowerCase();
+    setSearchTerm(keyword);
+
+    if (!keyword.trim()) {
+      // Show all if input is cleared
+      setFilteredProjects(projectsData);
+      return;
+    }
+
+    const filtered = projectsData.filter((project) => {
+      const skillsMatch = project.skillsRequired.some((skill) =>
+        skill.toLowerCase().includes(keyword)
+      );
+      const techMatch = project.techStack.some((tech) =>
+        tech.toLowerCase().includes(keyword)
+      );
+      return skillsMatch || techMatch;
+    });
+
+    setFilteredProjects(filtered);
+  };
+
   return (
     <nav className="bg-white shadow-md">
       <div className="flex justify-between gap-2 items-center p-2">
@@ -26,6 +60,17 @@ const Navbar = () => {
             </span>
           </Link>
         </div>
+
+        {location.pathname === "/" && (
+          <div className="hidden md:block md:mr-auto md:ml-6 w-full max-w-xs">
+            <input
+              type="text"
+              placeholder="Search by skill or tech stack..."
+              onChange={(e) => handleSearch(e.target.value)}
+              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        )}
 
         <div className="group relative">
           <img
