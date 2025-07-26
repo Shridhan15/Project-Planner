@@ -126,7 +126,24 @@ const getUserProjects = async (req, res) => {
     }
 }
 
+const getAuthorProfile= async(req,res)=>{
+    try{
+
+        const authorId= req.params.id;
+        const authorProfile = await User.findById(authorId).select("-password");
+        if (!authorProfile) {
+            return res.json({ success: false, message: "Author not found" });
+        }
+        res.json({ success: true, author: authorProfile });
+
+    }catch(error){
+        console.error("Error fetching author profile:", error);
+        res.json({ success: false, message: "Internal server error" });
+    }
+}
+
+ 
 
 
 
-export { registerUser, loginUser, fetchUserProfile, updateProfile, getUserProjects };
+export { registerUser, loginUser, fetchUserProfile, updateProfile, getUserProjects, getAuthorProfile };

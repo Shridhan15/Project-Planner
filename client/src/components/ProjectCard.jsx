@@ -3,6 +3,7 @@ import { assets } from "../assets/assets";
 import { ProjectContext } from "../../context/ProjectContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 const ProjectCard = ({ project }) => {
   const { token, navigate, backendUrl, userProfile, fetchUserProfile } =
@@ -31,7 +32,7 @@ const ProjectCard = ({ project }) => {
         toast.success("Request sent to author via Email");
       }
     } catch (error) {
-      toast.error(error.message)
+      toast.error(error.message);
       console.error("Error sending join request:", error);
     }
   };
@@ -84,20 +85,34 @@ const ProjectCard = ({ project }) => {
       </div>
 
       <p className="text-sm text-gray-500 mb-4">
-        Posted by: <span className="font-medium">{project.author.name}</span>
+        Posted by:{" "}
+        {project?.author?._id && userProfile?._id ? (
+          project.author._id === userProfile._id ? (
+            <span className="font-medium">You</span>
+          ) : (
+            <Link
+              to={`/author/${project.author._id}`}
+              className="text-blue-600 hover:underline font-medium"
+            >
+              {project.author.name}
+            </Link>
+          )
+        ) : (
+          <span className="italic text-gray-400">Unknown</span>
+        )}
       </p>
 
       {project.status === "open" &&
         project?.author?._id &&
         userProfile?._id &&
         project.author._id != userProfile._id && (
-            <button
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
-              onClick={handleRequestJoin}
-            >
-              Request to Join
-            </button>
-          )}
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition cursor-pointer"
+            onClick={handleRequestJoin}
+          >
+            Request to Join
+          </button>
+        )}
 
       {project?.author?._id &&
         userProfile?._id &&

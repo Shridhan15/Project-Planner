@@ -9,6 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile.jsx";
+import AuthorProfile from "./pages/AuthorProfile.jsx";
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
           }
         />
         <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/author/:authorId" element={<AuthorProfile />} />
       </Routes>
     </div>
   );
