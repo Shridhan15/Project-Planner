@@ -23,16 +23,6 @@ const ProjectContextProvider = (props) => {
     setIsAuthenticated(!!token);
   }, []);
 
-  const login = (token) => {
-    localStorage.setItem("token", token);
-    setIsAuthenticated(true);
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    setIsAuthenticated(false);
-  };
-
   const getAllProjects = async () => {
     try {
       const respose = await axios.get(backendUrl + "/api/project/getprojects");
@@ -89,8 +79,7 @@ const ProjectContextProvider = (props) => {
     getAllProjects,
     isAuthenticated,
     setIsAuthenticated,
-    login,
-    logout,
+
     userProfile,
     setUserProfile,
     loadingProfile,

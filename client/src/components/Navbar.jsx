@@ -5,13 +5,15 @@ import { useContext } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
 
 const Navbar = () => {
-  const { token, setToken, navigate, userProfile } = useContext(ProjectContext);
+  const { token, setToken, navigate, userProfile, setUserProfile } =
+    useContext(ProjectContext);
   // console.log("Token in Navbar:", token);
 
   const logout = () => {
-    navigate("/login");
+    setUserProfile(null);
     localStorage.removeItem("token");
     setToken("");
+    navigate("/login");
   };
   return (
     <nav className="bg-white shadow-md">
@@ -19,12 +21,18 @@ const Navbar = () => {
         <div>
           <Link to="/" className="flex items-center gap-2 ml-2">
             <img className="h-15 w-15 rounded-full" src={assets.logo} alt="" />
-            <span className="font-bold text-2xl text-violet-500">ProjectPartner</span>
+            <span className="font-bold text-2xl text-violet-500">
+              ProjectPartner
+            </span>
           </Link>
         </div>
 
         <div className="group relative">
-          <img className="rounded-full w-15 mr-4" src={userProfile?.profileImage || assets.profile_icon} alt="" />
+          <img
+            className="rounded-full w-12 mr-4"
+            src={userProfile?.profileImage || assets.profile_icon}
+            alt=""
+          />
           <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 ">
             <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
               <Link to="/profile" className="cursor-pointer hover:text-black">

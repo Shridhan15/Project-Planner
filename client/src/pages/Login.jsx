@@ -7,7 +7,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { backendUrl, token, setToken, navigate } = useContext(ProjectContext);
+  const { backendUrl, token, setToken, navigate,userProfile} = useContext(ProjectContext);
 
   const [currentState, setCurrentState] = useState("Sign Up");
   const [name, setName] = useState("");
