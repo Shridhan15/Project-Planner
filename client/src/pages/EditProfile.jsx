@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 const EditProfile = () => {
   const { token, navigate, backendUrl, fetchUserProfile, userProfile } =
     useContext(ProjectContext);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(userProfile?.name || "");
   const [email, setEmail] = useState("");
   const [mobileNumber, setMobileNumber] = useState("");
   const [yearOfStudy, setYearOfStudy] = useState("");
@@ -19,6 +19,10 @@ const EditProfile = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
+      if (!name.trim()) {
+        toast.error("Name cannot be empty or just spaces");
+        return;
+      }
       formData.append("name", name ? name : userProfile.name);
       formData.append("email", email ? email : userProfile.email);
       formData.append(
@@ -113,7 +117,7 @@ const EditProfile = () => {
                 name="name"
                 onChange={(e) => setName(e.target.value)}
                 defaultValue={userProfile.name}
-                required
+                required 
                 className="mt-1 w-full px-4 py-2 border rounded-md bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -124,9 +128,17 @@ const EditProfile = () => {
               </label>
               <input
                 name="mobileNumber"
-                onChange={(e) => setMobileNumber(e.target.value)}
-                type="number"
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^\d{0,10}$/.test(value)) {
+                    setMobileNumber(value);
+                  }
+                }} 
                 defaultValue={userProfile.mobileNumber}
+                type="tel"
+                pattern="\d{10}"
+                inputMode="numeric"
+                placeholder="Enter 10-digit mobile number"
                 className="mt-1 w-full px-4 py-2 border rounded-md bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
