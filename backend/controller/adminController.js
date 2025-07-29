@@ -1,7 +1,7 @@
 import Project from "../models/Project.js";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
-
+import { v2 as cloudinary } from "cloudinary";
 
 const loginAdmin = async (req, res) => {
     try {
@@ -49,5 +49,27 @@ const getAllUsers = async (req, res) => {
 
 
 
+const deleteProject = async (req, res) => {
+    const projectId = req.params.id;
 
-export { loginAdmin, getAllProjects, getAllUsers };
+    try {
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ success: false, message: "Project not found" });
+        }
+
+
+
+        await Project.findByIdAndDelete(projectId);
+
+        res.json({ success: true, message: "Project deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting project(in controller):", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+
+
+
+export { loginAdmin, getAllProjects, getAllUsers, deleteProject };
