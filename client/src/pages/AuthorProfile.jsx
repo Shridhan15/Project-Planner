@@ -24,7 +24,9 @@ const AuthorProfile = () => {
       const response = await axios.get(
         `${backendUrl}/api/user/author/${authorId}`,
         {
-          headers: { token },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       if (response.data.success) {
@@ -50,9 +52,7 @@ const AuthorProfile = () => {
           {/* Author Header */}
           <div className="flex flex-col sm:flex-row items-center gap-6 p-6 bg-white shadow-md rounded-lg mb-10">
             <img
-              src={
-                authorProfile.profileImage || assets.profile_icon
-              }  
+              src={authorProfile.profileImage || assets.profile_icon}
               alt={authorProfile.name}
               className="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
             />
@@ -82,7 +82,7 @@ const AuthorProfile = () => {
                     className="bg-white hover:shadow-lg rounded-lg shadow-md overflow-hidden"
                   >
                     <img
-                      src={project.image || assets.default_image}  
+                      src={project.image || assets.default_image}
                       alt={project.title}
                       className="w-full h-40 object-cover"
                     />

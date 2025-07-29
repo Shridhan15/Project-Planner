@@ -142,8 +142,22 @@ const getAuthorProfile= async(req,res)=>{
     }
 }
 
+
+
+ const getMe = async (req, res) => {
+  try {
+    const user = req.user;  
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({success:true,user});
+  } catch (err) {
+    console.error("Error in getMe controller:", err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
  
 
 
 
-export { registerUser, loginUser, fetchUserProfile, updateProfile, getUserProjects, getAuthorProfile };
+export { registerUser, loginUser, fetchUserProfile, updateProfile, getUserProjects, getAuthorProfile,getMe };

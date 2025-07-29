@@ -47,7 +47,11 @@ const EditProfile = () => {
       const response = await axios.put(
         backendUrl + "/api/user/update-profile",
         formData,
-        { headers: { token } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log("Response of updation", response.data);
       if (response.data.success) {

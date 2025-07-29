@@ -47,6 +47,28 @@ const ProjectContextProvider = (props) => {
     }
   };
 
+  useEffect(() => {
+    const verifyToken = async () => {
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) return;
+
+      try {
+        const res = await axios.get(`${backendUrl}/api/user/me`, {
+          headers: { token: storedToken },
+        });
+        setUser(res.data); // Set current user
+      } catch (err) {
+        // ❌ Token invalid or user deleted — logout
+        localStorage.removeItem("token");
+        setToken(null);
+        setUser(null);
+        navigate("/login");
+      }
+    };
+
+    verifyToken();
+  }, []);
+
   const fetchUserProfile = async () => {
     if (!token) {
       console.error("No token found, cannot fetch user profile.");
@@ -56,7 +78,9 @@ const ProjectContextProvider = (props) => {
 
     try {
       const response = await axios.get(`${backendUrl}/api/user/profile`, {
-        headers: { token },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       if (response.data.success) {

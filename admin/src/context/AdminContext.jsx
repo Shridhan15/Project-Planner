@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 
 // ✅ Define context properly (DO NOT use useContext here)
 export const AdminContext = createContext();
@@ -14,14 +14,14 @@ const AdminContextProvider = (props) => {
     () => localStorage.getItem("adminToken") || ""
   );
 
-  const navigate= useNavigate()
+  const navigate = useNavigate();
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const getAllProjects = async () => {
     try {
       const response = await axios.get(`${backendUrl}/api/admin/getprojects`, {
         headers: {
-          atoken
+          atoken,
         },
       });
 
@@ -40,12 +40,11 @@ const AdminContextProvider = (props) => {
     try {
       const response = await axios.get(`${backendUrl}/api/admin/getusers`, {
         headers: {
-          atoken
+          atoken,
         },
       });
-      const data = await response.json();
-      if (data.success) {
-        setUsers(data.users);
+      if (response.data.success) {
+        setUsers(response.data.users);
       } else {
         setError(data.message);
       }
@@ -61,6 +60,7 @@ const AdminContextProvider = (props) => {
     setProjects,
     getAllProjects,
     users,
+    getAllUsers,
     setUsers,
     atoken,
     setAtoken,

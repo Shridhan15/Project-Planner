@@ -8,10 +8,10 @@ const PostProject = () => {
   const [desc, setDesc] = useState("");
   const [skillsRequired, setSkillsRequired] = useState("");
   const [techStack, setTechStack] = useState("");
-   
+
   const [image, setImage] = useState(false);
 
-  const { backendUrl, token,navigate } = useContext(ProjectContext);
+  const { backendUrl, token, navigate } = useContext(ProjectContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +21,7 @@ const PostProject = () => {
       formData.append("description", desc);
       formData.append("skillsRequired", skillsRequired);
       formData.append("techStack", techStack);
-      
+
       if (image) {
         formData.append("image", image);
       } else {
@@ -31,8 +31,16 @@ const PostProject = () => {
       for (let pair of formData.entries()) {
         console.log(pair[0] + ": " + pair[1]);
       }
+      const response = await axios.post(
+        backendUrl + "/api/project/add",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      const response = await axios.post(backendUrl+'/api/project/add', formData, {headers:{token}})
       console.log("response", response.data);
       if (response.data.success) {
         toast.success("Project submitted successfully!");
@@ -41,14 +49,10 @@ const PostProject = () => {
         setSkillsRequired("");
         setTechStack("");
         setImage(null); // Reset image state
-        navigate('/')
+        navigate("/");
       } else {
         toast.error(response.data.message || "Failed to submit project.");
       }
-
-       
-
-
     } catch (error) {
       console.error("Error submitting project:", error);
       toast.error("Failed to submit project. Please try again later.");
@@ -98,10 +102,6 @@ const PostProject = () => {
           onChange={(e) => setTechStack(e.target.value)}
           className="w-full border px-4 py-2 rounded"
         />
-
-        
-
-         
 
         <input
           type="file"

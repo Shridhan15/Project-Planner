@@ -25,7 +25,11 @@ const ProjectCard = ({ project }) => {
       const response = await axios.post(
         backendUrl + "/api/project/send-request",
         { projectId: project._id },
-        { headers: { token } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       // console.log("Response:", response.data);
       if (response.data.success) {
@@ -42,7 +46,11 @@ const ProjectCard = ({ project }) => {
       const response = await axios.put(
         `${backendUrl}/api/project/close-project/${projectId}`,
         {},
-        { headers: { token } }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (response.data.success) {
         toast.success("Project closed successfully");

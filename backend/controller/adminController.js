@@ -69,7 +69,24 @@ const deleteProject = async (req, res) => {
     }
 };
 
+ 
+
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try { 
+    await Project.deleteMany({ author: id }); 
+    await User.findByIdAndDelete(id);
+
+    res.json({ success: true, message: "User and related projects deleted" });
+  } catch (err) {
+    console.error("Error deleting user and projects: (in controller)", err);
+    res.json({ success: false, message: "Server error" });
+  }
+};
 
 
 
-export { loginAdmin, getAllProjects, getAllUsers, deleteProject };
+
+
+export { loginAdmin, getAllProjects, getAllUsers, deleteProject, deleteUser };
