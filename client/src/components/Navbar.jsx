@@ -79,7 +79,7 @@ const Navbar = () => {
 
         <div className="group relative">
           <img
-            className="rounded-full w-12 mr-4"
+            className="rounded-full h-12 w-12 mr-4"
             src={userProfile?.profileImage || assets.profile_icon}
             alt=""
           />

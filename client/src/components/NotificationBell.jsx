@@ -4,6 +4,7 @@ import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { useContext } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
+import { toast } from "react-toastify";
 
 const NotificationBell = ({ token }) => {
   const [notifications, setNotifications] = useState([]);
@@ -48,16 +49,37 @@ const NotificationBell = ({ token }) => {
         }
       );
 
+      //avoid using fetchNotifications because it will make extra API call
       setNotifications((prev) =>
         prev.map((n) => (n._id === notifId ? { ...n, isRead: true } : n))
       );
       setHasUnread(notifications.some((n) => n._id !== notifId && !n.isRead)); //check if there are still unread notifications
     } catch (error) {
       console.error("Error marking notification as read:", error);
+      toast.error(error.message);
     }
   };
 
   const handleDeleteNotification= async (notifId) => {
+
+    try {
+
+      const response = await axios.delete(
+        backendUrl + "/api/notifications/" + notifId + "/delete",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.data.success) {
+        setNotifications((prev) => prev.filter((n) => n._id !== notifId));
+        toast.success("Notification deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting notification:", error);
+      toast.error(error.message);
+      
+    }
 
   }
 
