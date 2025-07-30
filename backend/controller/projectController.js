@@ -3,16 +3,16 @@ import { v2 as cloudinary } from "cloudinary";
 import Project from "../models/Project.js";
 import User from "../models/User.js";
 import { sendMail } from "../config/sendMail.js";
+import Notification from "../models/Notification.js";
 
 
 const addProject = async (req, res) => {
-
     try {
-
-        const { title, description, techStack, skillsRequired, } = req.body;
+        const { title, description, techStack, skillsRequired } = req.body;
         const image = req.file;
 
         let imageUrl = "";
+
         if (image) {
             const result = await cloudinary.uploader.upload(image.path, {
                 resource_type: "image",
@@ -27,8 +27,7 @@ const addProject = async (req, res) => {
             skillsRequired: skillsRequired.split(",").map(skill => skill.trim()),
             image: imageUrl,
             author: req.user._id,
-            status: "open", // Default status
-
+            status: "open",
         });
 
         await newProject.save();
@@ -39,10 +38,9 @@ const addProject = async (req, res) => {
     } catch (error) {
         console.error("Error adding project:", error);
         res.json({ success: false, message: "Internal server error" });
-
     }
+};
 
-}
 
 const getProjects = async (req, res) => {
     try {
@@ -56,7 +54,7 @@ const getProjects = async (req, res) => {
 
 
 const sendJoinRequest = async (req, res) => {
-    
+
     try {
         const { projectId } = req.body;
         const project = await Project.findById(projectId).populate("author", "name email");
@@ -83,32 +81,38 @@ const sendJoinRequest = async (req, res) => {
       <p>Cheers,<br/>Project Partner Team</p>
     `;
 
+        await Notification.create({
+            recipient: project.author._id,
+            sender: sender._id,
+            message: `You have a join request from ${req.user.name}. Check your email to contact.`,
+        });
+
         await sendMail(author.email, subject, html);
-        res.json({ success: true, message: "Join request email sent!" });
+        res.json({ success: true, message: "Join request sent and notification created." });
 
     } catch (error) {
-        console.error("Error sending join request:", error);
-        res.status(500).json({ success: false, message: "Internal server error" });
+        console.error("Error sending join request:(in controller)", error);
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
 
-const closeProject= async(req,res)=>{
+const closeProject = async (req, res) => {
 
     try {
 
-        const {projectId}=req.params;
-        if(!projectId) {
+        const { projectId } = req.params;
+        if (!projectId) {
             return res.json({ success: false, message: "Project ID is required" });
         }
 
         await Project.findByIdAndUpdate(projectId, { status: 'closed' });
         res.json({ success: true, message: "Project closed successfully" });
-        
+
     } catch (error) {
         console.error("Error closing project:", error);
         res.json({ success: false, message: "Internal server error" });
-        
+
     }
 }
 
@@ -116,4 +120,4 @@ const closeProject= async(req,res)=>{
 
 
 
-export { addProject, getProjects, sendJoinRequest,closeProject };
+export { addProject, getProjects, sendJoinRequest, closeProject };

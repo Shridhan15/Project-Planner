@@ -44,7 +44,10 @@ const Login = () => {
         // console.log("Response:", response.data);
         if (response.data.success) {
           toast.success("Login successful!");
-          setToken(response.data.token);
+          console.log("User token received:", response.data.token);
+
+          setToken(response.data.token); 
+
           localStorage.setItem("token", response.data.token);
         } else {
           toast.error(response.data.message || "Login failed.");

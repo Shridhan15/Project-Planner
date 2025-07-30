@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
 import { useLocation } from "react-router-dom";
+import { FaBell } from "react-icons/fa";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = () => {
   const {
@@ -66,12 +68,14 @@ const Navbar = () => {
             <input
               type="text"
               placeholder="Search by skill or tech stack..."
-              value={searchTerm}  
+              value={searchTerm}
               onChange={handleSearch}
               className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         )}
+
+         {token && <NotificationBell  token={token} />}
 
         <div className="group relative">
           <img

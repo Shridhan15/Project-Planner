@@ -16,6 +16,8 @@ const ProjectContextProvider = (props) => {
   const [userProfile, setUserProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [filteredProjects, setFilteredProjects] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const navigate = useNavigate();
 
@@ -47,28 +49,6 @@ const ProjectContextProvider = (props) => {
     }
   };
 
-  useEffect(() => {
-    const verifyToken = async () => {
-      const storedToken = localStorage.getItem("token");
-      if (!storedToken) return;
-
-      try {
-        const res = await axios.get(`${backendUrl}/api/user/me`, {
-          headers: { token: storedToken },
-        });
-        setUser(res.data); // Set current user
-      } catch (err) {
-        // ❌ Token invalid or user deleted — logout
-        localStorage.removeItem("token");
-        setToken(null);
-        setUser(null);
-        navigate("/login");
-      }
-    };
-
-    verifyToken();
-  }, []);
-
   const fetchUserProfile = async () => {
     if (!token) {
       console.error("No token found, cannot fetch user profile.");
@@ -90,12 +70,27 @@ const ProjectContextProvider = (props) => {
       console.error("Error fetching user profile:", error);
       toast.error("Failed to fetch user profile. Please try again later.");
     } finally {
-      setLoadingProfile(false); // ✅ Always stop loading
+      setLoadingProfile(false);
     }
   };
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await axios.get(backendUrl + "/api/notifications", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications(res.data.notifications);
+      const unread = res.data.notifications.filter((n) => !n.isRead).length;
+      setUnreadCount(unread);
+    } catch (err) {
+      console.error("Error fetching notifications:", err);
+    }
+  };
+
   useEffect(() => {
     if (token) {
       fetchUserProfile();
+      fetchNotifications();
     } else {
       setLoadingProfile(false);
     }
@@ -124,6 +119,7 @@ const ProjectContextProvider = (props) => {
     setUserProfile,
     loadingProfile,
     fetchUserProfile,
+    fetchNotifications,
   };
 
   return (

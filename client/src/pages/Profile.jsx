@@ -16,6 +16,10 @@ const Profile = () => {
 
   const [myProjects, setMyProjects] = useState([]);
 
+  console.log(localStorage.getItem("token")); // user token
+  console.log(localStorage.getItem("adminToken")); // admin token
+  console.log(localStorage); // full localStorage object
+
   //  Only fetch projects once on mount
   useEffect(() => {
     getAllProjects();
@@ -65,8 +69,9 @@ const Profile = () => {
             </div>
 
             <button
-            onClick={()=>navigate('/edit-profile')}
-             className=" ml-[250px] ring-1 cursor-pointer ring-gray-300 hover:ring-gray-400 focus:ring-gray-500 rounded-md px-4 py-2">
+              onClick={() => navigate("/edit-profile")}
+              className=" ml-[250px] ring-1 cursor-pointer ring-gray-300 hover:ring-gray-400 focus:ring-gray-500 rounded-md px-4 py-2"
+            >
               Edit
             </button>
           </div>

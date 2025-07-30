@@ -5,6 +5,7 @@ import connectDB from './config/mongodb.js';
 import userRouter from './routes/userRoutes.js';
 import projectRouter from './routes/projectRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
+import notificationRouter from './routes/notificationRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -23,6 +24,8 @@ app.use('/api/user', userRouter);
 app.use('/api/project', projectRouter);
 
 app.use('/api/admin',adminRouter)
+
+app.use('/api/notifications', notificationRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
