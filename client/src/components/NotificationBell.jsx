@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaBell } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { useContext } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
@@ -17,9 +18,8 @@ const NotificationBell = ({ token }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if(res.data.success){
+      if (res.data.success) {
         console.log("Fetched notifications:", res.data);
-
       }
 
       // Extract notifications array properly
@@ -27,41 +27,45 @@ const NotificationBell = ({ token }) => {
       setNotifications(data);
 
       // Check for unread notifications
-      setHasUnread(data.some((n) => !n.read));
+      setHasUnread(data.some((n) => !n.isRead));
     } catch (err) {
       console.error("Error fetching notifications:", err);
       setNotifications([]);
     }
   };
 
-  useEffect(()=>{
-    fetchNotifications()
-  },[token]);
+  useEffect(() => {
+    fetchNotifications();
+  }, [token]);
 
-  const handleBellClick = async () => {
-    setShowDropdown(!showDropdown);
-    console.log(notifications)
+  const handleNotificationClick = async (notifId) => {
+    try {
+      await axios.put(
+        backendUrl + "/api/notifications/" + notifId + "/mark-read",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    if (hasUnread) {
-      try {
-        await axios.put(backendUrl + "/api/notifications/mark-read",
-          {},
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        setHasUnread(false);
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-      } catch (err) {
-        console.error("Error marking notifications as read:", err);
-      }
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === notifId ? { ...n, isRead: true } : n))
+      );
+      setHasUnread(notifications.some((n) => n._id !== notifId && !n.isRead)); //check if there are still unread notifications
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
     }
   };
+
+  const handleDeleteNotification= async (notifId) => {
+
+  }
 
   return (
     <div className="relative mr-4">
       <FaBell
         className="text-gray-700 w-6 h-6 cursor-pointer"
-        onClick={handleBellClick}
+        onClick={() => setShowDropdown(!showDropdown)}
       />
       {hasUnread && (
         <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-600"></span>
@@ -73,11 +77,21 @@ const NotificationBell = ({ token }) => {
             notifications.map((notif) => (
               <div
                 key={notif._id}
-                className={`p-2 text-sm rounded ${
-                  notif.read ? "bg-white" : "bg-gray-100"
+                className={`p-2 text-sm rounded cursor-pointer flex justify-between items-center ${
+                  notif.isRead ? "bg-white" : "bg-gray-100"
                 }`}
               >
-                {notif.message}
+                <span
+                  onClick={() => handleNotificationClick(notif._id)}
+                  className="flex-1"
+                >
+                  {notif.message}
+                </span>
+
+                <FaTimes
+                  className="text-red-500 ml-2 cursor-pointer"
+                  onClick={() => handleDeleteNotification(notif._id)}
+                />
               </div>
             ))
           ) : (
