@@ -5,6 +5,7 @@ import axios from "axios";
 import { useContext } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
 import { toast } from "react-toastify";
+import { useRef } from "react";
 
 const NotificationBell = ({ token }) => {
   const [notifications, setNotifications] = useState([]);
@@ -12,6 +13,8 @@ const NotificationBell = ({ token }) => {
   const [hasUnread, setHasUnread] = useState(false);
 
   const { backendUrl } = useContext(ProjectContext);
+
+  const dropdownRef = useRef(null);
 
   const fetchNotifications = async () => {
     try {
@@ -60,10 +63,22 @@ const NotificationBell = ({ token }) => {
     }
   };
 
-  const handleDeleteNotification= async (notifId) => {
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleBellClick = () => {
+    setShowDropdown((prev) => !prev);
+  };
+  const handleDeleteNotification = async (notifId) => {
     try {
-
       const response = await axios.delete(
         backendUrl + "/api/notifications/" + notifId + "/delete",
         {
@@ -78,16 +93,14 @@ const NotificationBell = ({ token }) => {
     } catch (error) {
       console.error("Error deleting notification:", error);
       toast.error(error.message);
-      
     }
-
-  }
+  };
 
   return (
-    <div className="relative mr-4">
+    <div className="relative mr-4" ref={dropdownRef}>
       <FaBell
         className="text-gray-700 w-6 h-6 cursor-pointer"
-        onClick={() => setShowDropdown(!showDropdown)}
+        onClick={handleBellClick}
       />
       {hasUnread && (
         <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-600"></span>
@@ -100,7 +113,7 @@ const NotificationBell = ({ token }) => {
               <div
                 key={notif._id}
                 className={`p-2 text-sm rounded cursor-pointer flex justify-between items-center ${
-                  notif.isRead ? "bg-white" : "bg-gray-100"
+                  notif.isRead ? "bg-white" : "bg-gray-100 text-green-400"
                 }`}
               >
                 <span
