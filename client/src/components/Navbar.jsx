@@ -1,10 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { assets } from "../assets/assets";
-import { Link } from "react-router-dom";
-import { useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { ProjectContext } from "../../context/ProjectContext";
-import { useLocation } from "react-router-dom";
-import { FaBell } from "react-icons/fa";
 import NotificationBell from "./NotificationBell";
 
 const Navbar = () => {
@@ -17,8 +14,9 @@ const Navbar = () => {
     projectsData,
     setFilteredProjects,
   } = useContext(ProjectContext);
-  // console.log("Token in Navbar:", token);
+
   const location = useLocation();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const logout = () => {
     setUserProfile(null);
@@ -26,14 +24,12 @@ const Navbar = () => {
     setToken("");
     navigate("/login");
   };
-  const [searchTerm, setSearchTerm] = useState("");
 
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
     setSearchTerm(keyword);
 
     if (!keyword.trim()) {
-      // Show all if input is cleared
       setFilteredProjects(projectsData);
       return;
     }
@@ -53,18 +49,24 @@ const Navbar = () => {
 
   return (
     <nav className="bg-white shadow-md">
-      <div className="flex justify-between gap-2 items-center p-2">
+      <div className="flex justify-between items-center p-2">
+        {/* Left: Logo */}
         <div>
           <Link to="/" className="flex items-center gap-2 ml-2">
-            <img className="h-15 w-15 rounded-full" src={assets.logo} alt="" />
+            <img
+              className="h-15 w-15 rounded-full"
+              src={assets.logo}
+              alt="logo"
+            />
             <span className="font-bold text-2xl text-violet-500">
               ProjectPartner
             </span>
           </Link>
         </div>
 
+        {/* Middle: Search input (only on homepage) */}
         {location.pathname === "/" && (
-          <div className="hidden md:block md:mr-auto md:ml-6 w-full max-w-xs">
+          <div className="hidden md:block md:ml-6 w-full max-w-xs">
             <input
               type="text"
               placeholder="Search by skill or tech stack..."
@@ -75,29 +77,35 @@ const Navbar = () => {
           </div>
         )}
 
-         {token && <NotificationBell  token={token} />}
+        {/* Right: Notification + Profile */}
+        <div className="flex items-center gap-4 mr-4">
+          {token && <NotificationBell token={token} />}
 
-        <div className="group relative">
-          <img
-            className="rounded-full h-12 w-12 mr-4"
-            src={userProfile?.profileImage || assets.profile_icon}
-            alt=""
-          />
-          <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 ">
-            <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
-              <Link to="/profile" className="cursor-pointer hover:text-black">
-                My Profile
-              </Link>
-
-              {token && token !== "" ? (
-                <p className="cursor-pointer hover:text-black" onClick={logout}>
-                  Logout
-                </p>
-              ) : (
-                <Link to="/login" className="cursor-pointer hover:text-black">
-                  Login
+          <div className="group relative">
+            <img
+              className="rounded-full h-12 w-12 cursor-pointer"
+              src={userProfile?.profileImage || assets.profile_icon}
+              alt="profile"
+            />
+            <div className="group-hover:block hidden absolute right-0 pt-4 z-10">
+              <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded shadow-lg">
+                <Link to="/profile" className="cursor-pointer hover:text-black">
+                  My Profile
                 </Link>
-              )}
+
+                {token && token !== "" ? (
+                  <p
+                    className="cursor-pointer hover:text-black"
+                    onClick={logout}
+                  >
+                    Logout
+                  </p>
+                ) : (
+                  <Link to="/login" className="cursor-pointer hover:text-black">
+                    Login
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -2,6 +2,8 @@ import Project from "../models/Project.js";
 import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
+import Query from "../models/Query.js";
+import { sendMail } from "../config/sendMail.js";
 
 const loginAdmin = async (req, res) => {
     try {
@@ -69,24 +71,86 @@ const deleteProject = async (req, res) => {
     }
 };
 
- 
+
 
 const deleteUser = async (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  try { 
-    await Project.deleteMany({ author: id }); 
-    await User.findByIdAndDelete(id);
+    try {
+        await Project.deleteMany({ author: id });
+        await User.findByIdAndDelete(id);
 
-    res.json({ success: true, message: "User and related projects deleted" });
-  } catch (err) {
-    console.error("Error deleting user and projects: (in controller)", err);
-    res.json({ success: false, message: "Server error" });
-  }
+        res.json({ success: true, message: "User and related projects deleted" });
+    } catch (err) {
+        console.error("Error deleting user and projects: (in controller)", err);
+        res.json({ success: false, message: "Server error" });
+    }
+};
+
+const fetchQueries = async (req, res) => {
+    try {
+
+        const queries = await Query.find().sort({ createdAt: 1 });
+        res.json({ success: true, queries });
+
+    } catch (error) {
+        console.error("Error fetching queries:", error);
+        res.json({ success: false, message: "Internal server error" });
+
+    }
+}
+
+const queryResponse = async (req, res) => {
+    try {
+        const { response } = req.body;
+        const queryId = req.params.id;
+
+        if (!queryId) {
+            return res.json({ success: false, message: "Query ID is required" });
+        }
+        if (!response) {
+            return res.json({ success: false, message: "Response is required" });
+        }
+
+        const query = await Query.findById(queryId);
+        if (!query) {
+            return res.json({ success: false, message: "Query not found" });
+        }
+ 
+        query.response = response;
+        query.isResponded = true;
+        await query.save();
+ 
+        const subject = "Response to Your Support Query";
+        const html = `
+            <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+              <h2 style="color: #4A90E2;">Hello ${query.name},</h2>
+              <p>Thank you for reaching out to us. Below is our response to your query: <strong>${query.message}</strong></p>
+
+              <blockquote style="margin: 16px 0; padding: 10px 16px; background-color: #f9f9f9; border-left: 4px solid #4A90E2;">
+                ${response}
+              </blockquote>
+
+              <p>If you have any further questions, feel free to reply to this email.</p>
+
+              <br/>
+              <p>Best regards,<br/>
+              <strong>Project-Partner</strong><br/>
+              Support Team</p>
+            </div>
+        `;
+ 
+        await sendMail(query.email, subject, html);
+
+        res.json({ success: true, message: "Response saved and email sent." });
+
+    } catch (error) {
+        console.error("❌ Error responding to query:", error);
+        res.json({ success: false, message: "Internal server error" });
+    }
 };
 
 
 
 
-
-export { loginAdmin, getAllProjects, getAllUsers, deleteProject, deleteUser };
+export { loginAdmin, getAllProjects, getAllUsers, deleteProject, deleteUser, fetchQueries,queryResponse };

@@ -8,7 +8,8 @@ import Users from "./pages/Users";
 import Projects from "./pages/Projects";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
-import PrivateRoute from "./components/PrivateRoute";  
+import PrivateRoute from "./components/PrivateRoute";
+import Queries from "./pages/Queries.jsx";
 const App = () => {
   return (
     <div className="h-screen flex flex-col">
@@ -24,7 +25,6 @@ const App = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
 
-            {/* Wrap protected routes inside PrivateRoute */}
             <Route
               path="/"
               element={
@@ -54,6 +54,14 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/queries"
+              element={
+                <PrivateRoute>
+                  <Queries />
                 </PrivateRoute>
               }
             />

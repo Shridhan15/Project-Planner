@@ -31,6 +31,18 @@ const Sidebar = () => {
       >
         Users
       </NavLink>
+      <NavLink
+        to="/queries"
+        className={({ isActive }) =>
+          `px-4 py-2 rounded-l-lg text-gray-700 hover:bg-gray-100 ${
+            isActive
+              ? "border-r-4 border-violet-600 font-semibold bg-violet-50"
+              : ""
+          }`
+        }
+      >
+        Queries
+      </NavLink>
     </div>
   );
 };

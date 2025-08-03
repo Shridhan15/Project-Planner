@@ -21,7 +21,7 @@ const Login = () => {
         }
       );
       if (response.data.success) {
-        localStorage.setItem("adminToken", response.data.token);
+        localStorage.setItem("atoken", response.data.token);
         setAtoken(response.data.token);
         toast.success("Admin login successful!");
         navigate("/dashboard");

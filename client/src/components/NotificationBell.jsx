@@ -97,7 +97,7 @@ const NotificationBell = ({ token }) => {
   };
 
   return (
-    <div className="relative mr-4" ref={dropdownRef}>
+    <div className="relative mr-4 " ref={dropdownRef}>
       <FaBell
         className="text-gray-700 w-6 h-6 cursor-pointer"
         onClick={handleBellClick}
@@ -107,13 +107,13 @@ const NotificationBell = ({ token }) => {
       )}
 
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-80 bg-white shadow-md rounded-md z-50 p-2 max-h-60 overflow-y-auto">
+        <div className="absolute right-0 mt-2 w-80 bg-slate-100 shadow-md rounded-md z-50 p-2 max-h-60 overflow-y-auto">
           {notifications.length > 0 ? (
             notifications.map((notif) => (
               <div
                 key={notif._id}
-                className={`p-2 text-sm rounded cursor-pointer flex justify-between items-center ${
-                  notif.isRead ? "bg-white" : "bg-gray-100 text-green-400"
+                className={`p-2 text-sm border-b mb-2 rounded cursor-pointer flex justify-between items-center ${
+                  notif.isRead ? "bg-white" : "bg-gray-200 text-green-400"
                 }`}
               >
                 <span

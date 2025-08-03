@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 import { v2 as cloudinary } from "cloudinary";
 import { sendMail } from "../config/sendMail.js";
+import Query from "../models/Query.js";
 
 const registerUser = async (req, res) => {
 
@@ -162,40 +163,14 @@ const getMe = async (req, res) => {
 const Support = async (req, res) => {
     const { name, email, phone, message } = req.body;
 
-    const htmlContent = `
-  <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9;">
-    <h2 style="color: #333;">📩 New Support Request</h2>
-    <table style="width: 100%; max-width: 600px; border-collapse: collapse;">
-      <tr>
-        <td style="padding: 8px; font-weight: bold; width: 150px;">👤 Name:</td>
-        <td style="padding: 8px;">${name}</td>
-      </tr>
-      <tr style="background-color: #f1f1f1;">
-        <td style="padding: 8px; font-weight: bold;">📧 Email:</td>
-        <td style="padding: 8px;">${email}</td>
-      </tr>
-      <tr>
-        <td style="padding: 8px; font-weight: bold;">📞 Phone:</td>
-        <td style="padding: 8px;">${phone || "Not provided"}</td>
-      </tr>
-      <tr style="background-color: #f1f1f1;">
-        <td style="padding: 8px; font-weight: bold;">📝 Message:</td>
-        <td style="padding: 8px;">${message}</td>
-      </tr>
-    </table>
-    <p style="margin-top: 20px; font-size: 14px; color: #888;">
-      This message was submitted through the support form on <strong>Project Partner</strong>.
-    </p>
-  </div>
-`;
-
-
     try {
-        await sendMail(
-            "kjj24507@gmail.com",
-            `Support Request from ${name}`,
-            htmlContent
-        );
+        await Query.create({
+            name,
+            email,
+            phone,
+            message
+        });
+         
         res.status(200).json({ success: true, msg: "Support message sent successfully!" });
     } catch (err) {
         res.status(500).json({ success: false, msg: "Failed to send support message." });
