@@ -145,12 +145,30 @@ const queryResponse = async (req, res) => {
         res.json({ success: true, message: "Response saved and email sent." });
 
     } catch (error) {
-        console.error("❌ Error responding to query:", error);
+        console.error("Error responding to query:", error);
         res.json({ success: false, message: "Internal server error" });
     }
 };
 
+const deleteQuery= async(req,res)=>{
+    try {
+        const queryId = req.params.id;
+        if (!queryId) {
+            return res.json({ success: false, message: "Query ID is required" });
+        }
+  
+
+        await Query.findByIdAndDelete(queryId);
+        res.json({ success: true, message: "Query deleted successfully" });
+        
+    } catch (error) {
+        console.error("Error deleting query:", error);
+        res.json({ success: false, message: error.message });
+        
+    }
+}
 
 
 
-export { loginAdmin, getAllProjects, getAllUsers, deleteProject, deleteUser, fetchQueries,queryResponse };
+
+export { loginAdmin, getAllProjects, getAllUsers, deleteProject, deleteUser, fetchQueries,queryResponse,deleteQuery };

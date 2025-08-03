@@ -47,6 +47,27 @@ const Queries = () => {
     }
   };
 
+  const deleteQuery = async (queryId) => {
+    try {
+      const response = await axios.delete(
+        `${backendUrl}/api/admin/queries/delete/${queryId}`,
+        {
+          headers: { atoken },
+        }
+      );
+
+      if (response.data.success) {
+        toast.success("Query deleted successfully");
+        fetchQueries();
+      } else {
+        toast.error(response.data.message || "Failed to delete query");
+      }
+    } catch (error) {
+      console.error("Error deleting query:", error);
+      toast.error(error.message || "Failed to delete query");
+    }
+  };
+
   return (
     <div>
       {queries.length > 0 ? (
@@ -101,7 +122,15 @@ const Queries = () => {
               )}
 
               {query.isResponded ? (
-                <p className="text-green-600 mt-2">Response sent</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-green-600 mt-2">Response sent</p>
+                  <button
+                    onClick={() => deleteQuery(query._id)}
+                    className="cursor-pointer px-4 py-2  bg-red-500 hover:bg-red-600 text-white rounded shadow"
+                  >
+                    Delete Query
+                  </button>
+                </div>
               ) : (
                 <button
                   onClick={() => handleSendResponse(query)}
