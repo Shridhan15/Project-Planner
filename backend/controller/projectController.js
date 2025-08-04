@@ -4,6 +4,7 @@ import Project from "../models/Project.js";
 import User from "../models/User.js";
 import { sendMail } from "../config/sendMail.js";
 import Notification from "../models/Notification.js";
+import { io, userSocketMap } from "../server.js";
 
 
 const addProject = async (req, res) => {
@@ -81,11 +82,20 @@ const sendJoinRequest = async (req, res) => {
       <p>Cheers,<br/>Project Partner Team</p>
     `;
 
-        await Notification.create({
+        const notification = await Notification.create({
             recipient: project.author._id,
             sender: sender._id,
             message: `You have a join request from ${req.user.name}. Check your email to contact.`,
         });
+
+        // Emit in real time (if online)
+        const socketId = userSocketMap.get(author._id.toString());
+        if (socketId) {
+            io.to(socketId).emit("new_notification", notification);
+            console.log("Real-time notification sent to:", socketId);
+        } else {
+            console.log("Author not online (socket not found).");
+        }
 
         await sendMail(author.email, subject, html);
         res.json({ success: true, message: "Join request sent and notification created." });

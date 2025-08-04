@@ -1,11 +1,10 @@
-import React from "react";
-import { createContext } from "react";
-import { useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-export const ProjectContext = createContext();
-import dummyProjects from "../src/assets/assets";
 import axios from "axios";
+import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+
+export const ProjectContext = createContext();
 
 const ProjectContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -18,6 +17,9 @@ const ProjectContextProvider = (props) => {
   const [filteredProjects, setFilteredProjects] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [hasUnread, setHasUnread] = useState(false);
+
+  const socket = useRef(null); // ✅ socket managed via ref
 
   const navigate = useNavigate();
 
@@ -49,31 +51,6 @@ const ProjectContextProvider = (props) => {
     }
   };
 
-  const fetchUserProfile = async () => {
-    if (!token) {
-      console.error("No token found, cannot fetch user profile.");
-      setLoadingProfile(false); // Even if token is missing, stop loading
-      return;
-    }
-
-    try {
-      const response = await axios.get(`${backendUrl}/api/user/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.data.success) {
-        setUserProfile(response.data.user);
-      }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      toast.error("Failed to fetch user profile. Please try again later.");
-    } finally {
-      setLoadingProfile(false);
-    }
-  };
-
   const fetchNotifications = async () => {
     try {
       const res = await axios.get(backendUrl + "/api/notifications", {
@@ -87,6 +64,45 @@ const ProjectContextProvider = (props) => {
     }
   };
 
+  const fetchUserProfile = async () => {
+    if (!token) {
+      setLoadingProfile(false);
+      return;
+    }
+
+    try {
+      const response = await axios.get(`${backendUrl}/api/user/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        const user = response.data.user;
+        setUserProfile(user);
+
+        // ✅ Connect socket only once
+        if (!socket.current) {
+          socket.current = io(backendUrl);
+        }
+
+        // ✅ Register user
+        socket.current.emit("register", user._id);
+
+        // ✅ Listen to new notifications
+        socket.current.on("new_notification", (notification) => {
+          console.log("📨 New Notification:", notification);
+          setNotifications((prev) => [notification, ...prev]);
+          setHasUnread(true);
+          toast.info(notification.message);
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      toast.error("Failed to fetch user profile.");
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
   useEffect(() => {
     if (token) {
       fetchUserProfile();
@@ -94,7 +110,14 @@ const ProjectContextProvider = (props) => {
     } else {
       setLoadingProfile(false);
     }
+
+    return () => {
+      if (socket.current) {
+        socket.current.disconnect(); // ✅ Cleanup on unmount
+      }
+    };
   }, [token]);
+
   useEffect(() => {
     getAllProjects();
   }, []);
@@ -120,6 +143,11 @@ const ProjectContextProvider = (props) => {
     loadingProfile,
     fetchUserProfile,
     fetchNotifications,
+    notifications,
+    setNotifications,
+    setHasUnread,
+    unreadCount,
+    hasUnread,
   };
 
   return (
