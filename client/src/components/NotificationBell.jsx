@@ -10,7 +10,13 @@ import { useRef } from "react";
 const NotificationBell = ({ token }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const { backendUrl, hasUnread, setHasUnread, notifications, setNotifications } = useContext(ProjectContext);
+  const {
+    backendUrl,
+    hasUnread,
+    setHasUnread,
+    notifications,
+    setNotifications,
+  } = useContext(ProjectContext);
 
   const dropdownRef = useRef(null);
 
@@ -23,10 +29,10 @@ const NotificationBell = ({ token }) => {
       if (res.data.success) {
         console.log("Fetched notifications:", res.data);
       }
- 
+
       const data = res.data.notifications || [];
       setNotifications(data);
- 
+
       setHasUnread(data.some((n) => !n.isRead));
     } catch (err) {
       console.error("Error fetching notifications:", err);
@@ -47,13 +53,34 @@ const NotificationBell = ({ token }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
- 
+
       setNotifications((prev) =>
         prev.map((n) => (n._id === notifId ? { ...n, isRead: true } : n))
       );
-      setHasUnread(notifications.some((n) => n._id !== notifId && !n.isRead)); 
+      setHasUnread(notifications.some((n) => n._id !== notifId && !n.isRead));
     } catch (error) {
       console.error("Error marking notification as read:", error);
+      toast.error(error.message);
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      const response = await axios.put(
+        backendUrl + "/api/notifications/mark-all-read",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.data.success) {
+        setNotifications((prev) =>
+          prev.map((n) => ({ ...n, isRead: true }))
+        );
+        setHasUnread(false);
+      }
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
       toast.error(error.message);
     }
   };
@@ -103,6 +130,14 @@ const NotificationBell = ({ token }) => {
 
       {showDropdown && (
         <div className="absolute right-0 mt-2 w-80 bg-slate-100 shadow-md rounded-md z-50 p-2 max-h-60 overflow-y-auto">
+          {notifications.length > 0 && hasUnread && (
+            <a
+              onClick={handleMarkAllRead}
+              className="mb-2  text-sm   text-blue-400 rounded hover:text-blue-800 cursor-pointer underline"
+            >
+              Mark all as read
+            </a>
+          )}
           {notifications.length > 0 ? (
             notifications.map((notif) => (
               <div

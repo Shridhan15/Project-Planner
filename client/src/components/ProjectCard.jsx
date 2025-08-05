@@ -122,25 +122,7 @@ const ProjectCard = ({ project }) => {
               Request to Join
             </button>
 
-            {/* WhatsApp Message Button */}
-            {project.author?.mobileNumber && (
-              <a
-                href={`https://wa.me/91${
-                  project.author.mobileNumber
-                }?text=${encodeURIComponent(
-                  `Hi ${project.author.name}, I'm interested in your project "${project.title}" on Project-Partner.`
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <button
-                  type="button"
-                  className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition cursor-pointer"
-                >
-                  Message on WhatsApp
-                </button>
-              </a>
-            )}
+           
           </div>
         )}
 
