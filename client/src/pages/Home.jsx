@@ -64,7 +64,7 @@ const Home = () => {
             No matching projects found.
           </div>
         ) : (
-          //Shown initially when projects are still loading
+          //Shown  when projects are still loading
           <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(6)].map((_, index) => (
               <div

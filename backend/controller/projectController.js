@@ -45,7 +45,7 @@ const addProject = async (req, res) => {
 
 const getProjects = async (req, res) => {
     try {
-        const projects = await Project.find().populate("author", "name email");
+        const projects = await Project.find().populate("author", "name email mobileNumber");
         res.json({ success: true, projects });
     } catch (error) {
         console.error("Error fetching projects:", error);
@@ -58,7 +58,7 @@ const sendJoinRequest = async (req, res) => {
 
     try {
         const { projectId } = req.body;
-        const project = await Project.findById(projectId).populate("author", "name email");
+        const project = await Project.findById(projectId).populate("author", "name email mobileNumber");
         if (!project) {
             return res.status(404).json({ success: false, message: "Project not found" });
         }

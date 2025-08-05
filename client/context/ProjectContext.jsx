@@ -79,15 +79,15 @@ const ProjectContextProvider = (props) => {
         const user = response.data.user;
         setUserProfile(user);
 
-        // ✅ Connect socket only once
+        // Connect socket only once
         if (!socket.current) {
           socket.current = io(backendUrl);
         }
 
-        // ✅ Register user
+        // Register user
         socket.current.emit("register", user._id);
 
-        // ✅ Listen to new notifications
+        // Listen to new notifications
         socket.current.on("new_notification", (notification) => {
           console.log("📨 New Notification:", notification);
           setNotifications((prev) => [notification, ...prev]);

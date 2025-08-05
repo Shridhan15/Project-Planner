@@ -11,9 +11,7 @@ const getAllNotifications = async (req, res) => {
     console.error("Error fetching notifications:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
-}
-
-// controller/notificationController.js
+} 
 
 const markNotificationAsRead = async (req, res) => {
   try {

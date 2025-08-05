@@ -64,7 +64,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Middle: Search input (only on homepage) */}
+        {/* Middle: Search input  */}
         {location.pathname === "/" && (
           <div className="hidden md:block md:ml-6 w-full max-w-xs">
             <input
@@ -77,7 +77,7 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* Right: Notification + Profile */}
+        {/*  Notification + Profile */}
         <div className="flex items-center gap-4 mr-4">
           {token && <NotificationBell token={token} />}
 
