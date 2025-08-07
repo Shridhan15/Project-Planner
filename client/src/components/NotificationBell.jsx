@@ -16,6 +16,7 @@ const NotificationBell = ({ token }) => {
     setHasUnread,
     notifications,
     setNotifications,
+    navigate,
   } = useContext(ProjectContext);
 
   const dropdownRef = useRef(null);
@@ -74,9 +75,7 @@ const NotificationBell = ({ token }) => {
         }
       );
       if (response.data.success) {
-        setNotifications((prev) =>
-          prev.map((n) => ({ ...n, isRead: true }))
-        );
+        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
         setHasUnread(false);
       }
     } catch (error) {
@@ -118,6 +117,33 @@ const NotificationBell = ({ token }) => {
     }
   };
 
+  const handleAccept = async (project) => {
+    try {
+      const response = await axios.put(
+        `${backendUrl}/api/project/accept-request/${project}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.data.success) {
+        toast.success("Join request accepted successfully");
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.project._id === project._id ? { ...n, isRead: true } : n
+          )
+        );
+        setHasUnread(false);
+      } else {
+        toast.error(response.data.message || "Failed to accept join request");
+      }
+    } catch (error) {
+      console.error("Error accepting project:", error);
+      toast.error(error.message);
+    }
+  };
+  const handleReject = async (notif) => {};
+
   return (
     <div className="relative mr-4 " ref={dropdownRef}>
       <FaBell
@@ -142,21 +168,46 @@ const NotificationBell = ({ token }) => {
             notifications.map((notif) => (
               <div
                 key={notif._id}
-                className={`p-2 text-sm border-b mb-2 rounded cursor-pointer flex justify-between items-center ${
-                  notif.isRead ? "bg-white" : "bg-gray-200 text-green-400"
+                className={`p-4 border rounded-md mb-4 shadow-sm ${
+                  notif.isRead ? "bg-white" : "bg-gray-100 font-medium"
                 }`}
               >
-                <span
-                  onClick={() => handleNotificationClick(notif._id)}
-                  className="flex-1"
-                >
-                  {notif.message}
-                </span>
+                <div className="flex justify-between items-start mb-2">
+                  <span
+                    onClick={() => handleNotificationClick(notif._id)}
+                    className="text-sm flex-1 cursor-pointer"
+                  >
+                    {notif.message}{" "}
+                    <button
+                      onClick={() => navigate(`/author/${notif.sender._id}`)}
+                      className="text-blue-600 font-medium cursor-pointer hover:underline"
+                    >
+                      {notif.sender.name}.
+                    </button>
+                    Check your email to contact.
+                  </span>
+                  <div className="flex items-center gap-2 ml-4">
+                    <FaTimes
+                      className="text-red-500 text-lg cursor-pointer"
+                      onClick={() => handleDeleteNotification(notif._id)}
+                    />
+                  </div>
+                </div>
 
-                <FaTimes
-                  className="text-red-500 ml-2 cursor-pointer"
-                  onClick={() => handleDeleteNotification(notif._id)}
-                />
+                <div className="flex justify-start gap-3 mt-2">
+                  <button
+                    onClick={() => handleAccept(notif.project)}
+                    className=" cursor-pointer px-4 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
+                  >
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => handleReject(notif)}
+                    className=" cursor-pointer px-4 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
+                  >
+                    Reject
+                  </button>
+                </div>
               </div>
             ))
           ) : (

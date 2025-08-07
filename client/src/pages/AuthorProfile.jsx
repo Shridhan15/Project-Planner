@@ -49,7 +49,7 @@ const AuthorProfile = () => {
     <div className="max-w-5xl mx-auto px-4 py-8">
       {authorProfile ? (
         <>
-          {/* Author Header */}
+          {/*   Header */}
           <div className="flex flex-col sm:flex-row items-center gap-6 p-6 bg-white shadow-md rounded-lg mb-10">
             <img
               src={authorProfile.profileImage || assets.profile_icon}
@@ -69,7 +69,7 @@ const AuthorProfile = () => {
             </div>
           </div>
 
-          {/* Author Projects */}
+          {/*   Projects */}
           <div>
             <h3 className="text-2xl font-semibold mb-4">
               Projects by {authorProfile.name}
@@ -105,13 +105,13 @@ const AuthorProfile = () => {
               </div>
             ) : (
               <p className="text-gray-500">
-                No projects found for this author.
+                No projects found for this user.
               </p>
             )}
           </div>
         </>
       ) : (
-        <p className="text-center text-gray-500">Loading author profile...</p>
+        <p className="text-center text-gray-500">Loading user profile...</p>
       )}
     </div>
   );

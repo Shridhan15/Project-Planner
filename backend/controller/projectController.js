@@ -99,7 +99,9 @@ const sendJoinRequest = async (req, res) => {
         const notification = await Notification.create({
             recipient: project.author._id,
             sender: sender._id,
-            message: `You have a join request from ${req.user.name}. Check your email to contact.`,
+            project: projectId,
+            //  
+            message: `You have a new join request for your project ${project.title} from`,
         });
 
         // Emit in real time (if online)
@@ -141,7 +143,26 @@ const closeProject = async (req, res) => {
 }
 
 
+const acceptJoinRequest= async(req,res)=>{
+
+    try {
+
+        const {project}= req.params;
+        const request= await JoinRequest.findOneAndUpdate({project}, { status: 'Accepted' }, { new: true });
+        if (!request) {
+            return res.status(404).json({ success: false, message: "Join request not found" });
+        }
+        res.json({ success: true, message: "Join request accepted", request });
+        
+    } catch (error) {
+        console.error("Error accepting join request:(in controller)", error);
+        res.json({ success: false, message: error.message });
+        
+    }
+
+
+}
 
 
 
-export { addProject, getProjects, sendJoinRequest, closeProject };
+export { addProject, getProjects, sendJoinRequest, closeProject, acceptJoinRequest };
