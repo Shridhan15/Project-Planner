@@ -124,7 +124,7 @@ const ProjectContextProvider = (props) => {
       fetchSentRequests();
     }
 
-  },[userProfile])
+  },[userProfile]) 
 
   useEffect(() => {
     if (token) {

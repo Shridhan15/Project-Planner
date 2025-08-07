@@ -142,7 +142,31 @@ const NotificationBell = ({ token }) => {
       toast.error(error.message);
     }
   };
-  const handleReject = async (notif) => {};
+  const handleReject = async (project) => {
+    try {
+      const response = await axios.put(
+        `${backendUrl}/api/project/reject-request/${project}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.data.success) {
+        toast.success("Join request reject.");
+        setNotifications((prev) =>
+          prev.map((n) =>
+            n.project._id === project._id ? { ...n, isRead: true } : n
+          )
+        );
+        setHasUnread(false);
+      } else {
+        toast.error(response.data.message || "Failed to reject join request");
+      }
+    } catch (error) {
+      console.error("Error rejecting project:", error);
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="relative mr-4 " ref={dropdownRef}>
@@ -182,9 +206,9 @@ const NotificationBell = ({ token }) => {
                       onClick={() => navigate(`/author/${notif.sender._id}`)}
                       className="text-blue-600 font-medium cursor-pointer hover:underline"
                     >
-                      {notif.sender.name}.
+                      See Profile
                     </button>
-                    Check your email to contact.
+                    . Check your email to contact.
                   </span>
                   <div className="flex items-center gap-2 ml-4">
                     <FaTimes
@@ -202,7 +226,7 @@ const NotificationBell = ({ token }) => {
                     Accept
                   </button>
                   <button
-                    onClick={() => handleReject(notif)}
+                    onClick={() => handleReject(notif.project)}
                     className=" cursor-pointer px-4 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
                   >
                     Reject
