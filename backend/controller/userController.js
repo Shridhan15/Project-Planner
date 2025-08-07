@@ -6,6 +6,7 @@ import { validationResult } from "express-validator";
 import { v2 as cloudinary } from "cloudinary";
 import { sendMail } from "../config/sendMail.js";
 import Query from "../models/Query.js";
+import JoinRequest from "../models/joinRequest.js";
 
 const registerUser = async (req, res) => {
 
@@ -170,15 +171,30 @@ const Support = async (req, res) => {
             phone,
             message
         });
-         
+
         res.status(200).json({ success: true, msg: "Support message sent successfully!" });
     } catch (err) {
         res.status(500).json({ success: false, msg: "Failed to send support message." });
     }
 };
 
+const getJoinRequests = async (req, res) => {
 
+    try {
+        const requests = await JoinRequest.find({ sender: req.user._id }).select("project status")
+        const requestsByProject = {};
+        requests.forEach((req) => {
+            requestsByProject[req.project.toString()] = req.status;
+        });
 
+        res.json({ success:true,requestsByProject: requestsByProject });
 
+    } catch (error) {
+        console.error("Error fetching join requests:", error);
+        res.json({ success: false, message: "Internal server error" });
 
-export { registerUser, loginUser, fetchUserProfile, updateProfile, getUserProjects, getAuthorProfile, getMe, Support };
+    }
+
+}
+
+export { registerUser, loginUser, fetchUserProfile, updateProfile, getUserProjects, getAuthorProfile, getMe, Support, getJoinRequests };

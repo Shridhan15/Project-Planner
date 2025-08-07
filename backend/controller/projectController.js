@@ -5,6 +5,7 @@ import User from "../models/User.js";
 import { sendMail } from "../config/sendMail.js";
 import Notification from "../models/Notification.js";
 import { io, userSocketMap } from "../server.js";
+import JoinRequest from "../models/joinRequest.js";
 
 
 const addProject = async (req, res) => {
@@ -69,6 +70,19 @@ const sendJoinRequest = async (req, res) => {
         if (!sender) {
             return res.status(401).json({ success: false, message: "Sender not authenticated" });
         }
+        const existingRequest = await JoinRequest.findOne({
+            project: projectId,
+            sender: sender._id,
+        });
+        if (existingRequest) {
+            return res.status(400).json({ success: false, message: "Request already sent" });
+        }
+        const joinRequest = await JoinRequest.create({
+            project: projectId,
+            sender: sender._id,
+            receiver: project.author._id,
+            status: 'Sent',
+        });
 
         const subject = `🚀 Join Request for Your Project: ${project.title}`;
         const html = `
