@@ -18,6 +18,7 @@ const ProjectContextProvider = (props) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [hasUnread, setHasUnread] = useState(false);
+  const [requestStatusByProject, setRequestStatusByProject] = useState({});
 
   const socket = useRef(null); // ✅ socket managed via ref
 
@@ -103,6 +104,28 @@ const ProjectContextProvider = (props) => {
     }
   };
 
+  useEffect(()=>{
+
+    const fetchSentRequests=async()=>{
+      try {
+        const response= await axios.get(backendUrl + "/api/user/join-requests", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.data.success) {
+          const requests = response.data.requestsByProject;
+          setRequestStatusByProject(requests);
+        }
+      } catch (error) {
+        console.error("Error fetching sent requests:", error);
+        
+      }
+    }
+    if(userProfile?._id) {
+      fetchSentRequests();
+    }
+
+  },[userProfile])
+
   useEffect(() => {
     if (token) {
       fetchUserProfile();
@@ -148,6 +171,8 @@ const ProjectContextProvider = (props) => {
     setHasUnread,
     unreadCount,
     hasUnread,
+    requestStatusByProject,
+    setRequestStatusByProject
   };
 
   return (
