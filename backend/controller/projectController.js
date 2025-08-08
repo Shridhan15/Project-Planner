@@ -14,12 +14,14 @@ const addProject = async (req, res) => {
         const image = req.file;
 
         let imageUrl = "";
+        let imagePublicId = "";
 
         if (image) {
             const result = await cloudinary.uploader.upload(image.path, {
                 resource_type: "image",
             });
             imageUrl = result.secure_url;
+            imagePublicId = result.public_id; // Store the public ID for future reference(while deleting the image)
         }
 
         const newProject = new Project({
@@ -29,6 +31,7 @@ const addProject = async (req, res) => {
             skillsRequired: skillsRequired.split(",").map(skill => skill.trim()),
             image: imageUrl,
             author: req.user._id,
+            imagePublicId:imagePublicId,
             status: "open",
         });
 
@@ -38,7 +41,7 @@ const addProject = async (req, res) => {
         res.json({ success: true, message: "Project added successfully", project: newProject });
 
     } catch (error) {
-        console.error("Error adding project:", error);
+        console.error("Error adding project(in controller):", error);
         res.json({ success: false, message: "Internal server error" });
     }
 };
@@ -133,6 +136,7 @@ const closeProject = async (req, res) => {
         }
 
         await Project.findByIdAndUpdate(projectId, { status: 'closed' });
+         
         res.json({ success: true, message: "Project closed successfully" });
 
     } catch (error) {

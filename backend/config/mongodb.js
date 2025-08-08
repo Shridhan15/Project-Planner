@@ -7,11 +7,11 @@ const connectDB = async () => {
         });
 
         mongoose.connection.on("error", (err) => {
-            console.error("❌ MongoDB connection error:", err.message);
+            console.error("  MongoDB connection error:", err.message);
         });
 
         mongoose.connection.on("disconnected", () => {
-            console.warn("⚠️ MongoDB disconnected");
+            console.warn("  MongoDB disconnected");
         });
 
         await mongoose.connect(`${process.env.MONGO_URI}/project-partner`, {

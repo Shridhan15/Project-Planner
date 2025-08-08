@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
 import Query from "../models/Query.js";
 import { sendMail } from "../config/sendMail.js";
+import JoinRequest from "../models/joinRequest.js";
+import Notification from "../models/Notification.js";
 
 const loginAdmin = async (req, res) => {
     try {
@@ -59,9 +61,13 @@ const deleteProject = async (req, res) => {
         if (!project) {
             return res.status(404).json({ success: false, message: "Project not found" });
         }
+        if (project.imagePublicId) {
+            await cloudinary.uploader.destroy(project.imagePublicId);
+        }
 
+        await JoinRequest.deleteMany({ project: projectId });
 
-
+        await Notification.deleteMany({ project: projectId });
         await Project.findByIdAndDelete(projectId);
 
         res.json({ success: true, message: "Project deleted successfully" });
@@ -116,11 +122,11 @@ const queryResponse = async (req, res) => {
         if (!query) {
             return res.json({ success: false, message: "Query not found" });
         }
- 
+
         query.response = response;
         query.isResponded = true;
         await query.save();
- 
+
         const subject = "Response to Your Support Query";
         const html = `
             <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -139,7 +145,7 @@ const queryResponse = async (req, res) => {
               Support Team</p>
             </div>
         `;
- 
+
         await sendMail(query.email, subject, html);
 
         res.json({ success: true, message: "Response saved and email sent." });
@@ -150,25 +156,25 @@ const queryResponse = async (req, res) => {
     }
 };
 
-const deleteQuery= async(req,res)=>{
+const deleteQuery = async (req, res) => {
     try {
         const queryId = req.params.id;
         if (!queryId) {
             return res.json({ success: false, message: "Query ID is required" });
         }
-  
+
 
         await Query.findByIdAndDelete(queryId);
         res.json({ success: true, message: "Query deleted successfully" });
-        
+
     } catch (error) {
         console.error("Error deleting query:", error);
         res.json({ success: false, message: error.message });
-        
+
     }
 }
 
 
 
 
-export { loginAdmin, getAllProjects, getAllUsers, deleteProject, deleteUser, fetchQueries,queryResponse,deleteQuery };
+export { loginAdmin, getAllProjects, getAllUsers, deleteProject, deleteUser, fetchQueries, queryResponse, deleteQuery };

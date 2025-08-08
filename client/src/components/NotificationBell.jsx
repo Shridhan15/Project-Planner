@@ -17,6 +17,8 @@ const NotificationBell = ({ token }) => {
     notifications,
     setNotifications,
     navigate,
+    requestStatusByProject,
+    setRequestStatusByProject,
   } = useContext(ProjectContext);
 
   const dropdownRef = useRef(null);
@@ -217,6 +219,18 @@ const NotificationBell = ({ token }) => {
                     />
                   </div>
                 </div>
+
+                {
+                  requestStatusByProject &&
+                  requestStatusByProject[notif.project._id] && (
+                    <p className="text-sm text-gray-500">
+                      Request Status:{" "}
+                      <span className="font-medium">
+                        {requestStatusByProject[notif.project._id]}
+                      </span>
+                    </p>
+                  )}
+                
 
                 <div className="flex justify-start gap-3 mt-2">
                   <button

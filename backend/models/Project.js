@@ -6,6 +6,7 @@ const projectSchema = new mongoose.Schema({
   techStack: { type: [String], default: [] },
   skillsRequired: { type: [String], default: [] },
   image: String,
+  imagePublicId: String,
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
