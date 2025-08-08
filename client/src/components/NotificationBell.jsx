@@ -181,7 +181,7 @@ const NotificationBell = ({ token }) => {
       )}
 
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-80 bg-slate-100 shadow-md rounded-md z-50 p-2 max-h-60 overflow-y-auto">
+        <div className="absolute right-0 mt-2 w-80 bg-slate-100 shadow-md rounded-md z-50 p-2 max-h-180 overflow-y-auto">
           {notifications.length > 0 && hasUnread && (
             <a
               onClick={handleMarkAllRead}
@@ -204,13 +204,19 @@ const NotificationBell = ({ token }) => {
                     className="text-sm flex-1 cursor-pointer"
                   >
                     {notif.message}{" "}
-                    <button
-                      onClick={() => navigate(`/author/${notif.sender._id}`)}
-                      className="text-blue-600 font-medium cursor-pointer hover:underline"
-                    >
-                      See Profile
-                    </button>
-                    . Check your email to contact.
+                    {notif.type === "joinRequest" && (
+                      <button
+                        onClick={() => navigate(`/author/${notif.sender._id}`)}
+                        className="text-blue-600 font-medium cursor-pointer hover:underline"
+                      >
+                        See Profile
+                      </button>
+                    )}
+                    {notif.type === "joinRequest" && (
+                      <span className="text-gray-500">
+                        . Check your email to contact.
+                      </span>
+                    )}
                   </span>
                   <div className="flex items-center gap-2 ml-4">
                     <FaTimes
@@ -220,8 +226,7 @@ const NotificationBell = ({ token }) => {
                   </div>
                 </div>
 
-                {
-                  requestStatusByProject &&
+                {requestStatusByProject &&
                   requestStatusByProject[notif.project._id] && (
                     <p className="text-sm text-gray-500">
                       Request Status:{" "}
@@ -230,22 +235,23 @@ const NotificationBell = ({ token }) => {
                       </span>
                     </p>
                   )}
-                
 
-                <div className="flex justify-start gap-3 mt-2">
-                  <button
-                    onClick={() => handleAccept(notif.project)}
-                    className=" cursor-pointer px-4 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    onClick={() => handleReject(notif.project)}
-                    className=" cursor-pointer px-4 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
-                  >
-                    Reject
-                  </button>
-                </div>
+                {notif.type === "joinRequest" && (
+                  <div className="flex justify-start gap-3 mt-2">
+                    <button
+                      onClick={() => handleAccept(notif.project)}
+                      className=" cursor-pointer px-4 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => handleReject(notif.project)}
+                      className=" cursor-pointer px-4 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
               </div>
             ))
           ) : (

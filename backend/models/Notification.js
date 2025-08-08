@@ -6,6 +6,7 @@ const notificationSchema = new mongoose.Schema({
     project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
     message: { type: String, required: true },
     isRead: { type: Boolean, default: false },
+    type: { type: String, enum: ['joinRequest', 'responseToRequest'], required: true },
     createdAt: { type: Date, default: Date.now }
 });
 
