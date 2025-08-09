@@ -74,14 +74,14 @@ const EditProfile = () => {
           Edit Profile
         </h2>
 
-        {/* Profile Image Upload */}
+        {/*----------- Profile Image Upload --------------*/}
         <div className="flex justify-center">
           <label htmlFor="image" className="relative group cursor-pointer">
             <img
               src={
                 profileImage
                   ? URL.createObjectURL(profileImage) // preview selected image
-                  : userProfile.profileImage || assets.profile_icon // fallback
+                  : userProfile.profileImage || assets.profile_icon  
               }
               alt="Profile"
               className="w-28 h-28 object-cover rounded-full border-2 border-gray-300 shadow-md group-hover:opacity-80 transition duration-200"

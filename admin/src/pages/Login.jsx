@@ -24,7 +24,7 @@ const Login = () => {
         localStorage.setItem("atoken", response.data.token);
         setAtoken(response.data.token);
         toast.success("Admin login successful!");
-        navigate("/dashboard");
+        navigate("/");
         // redirect logic if needed
       } else {
         toast.error(
@@ -86,7 +86,7 @@ const Login = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold"
+          className="w-full cursor-pointer bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold"
         >
           Login
         </button>

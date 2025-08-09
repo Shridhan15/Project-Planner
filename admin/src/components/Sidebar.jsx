@@ -1,61 +1,35 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { AdminContext } from "../context/AdminContext";
 
 const Sidebar = () => {
+  const { atoken } = useContext(AdminContext);
+
   return (
-    <div className="h-screen w-60 bg-white shadow-lg p-5 flex flex-col space-y-4 border-r border-gray-200">
-      <h2 className="text-2xl font-bold mb-8 text-gray-800">Admin Panel</h2>
-      <NavLink
-        to="/dashboard"
-        className={({ isActive }) =>
-          `px-4 py-2 rounded-l-lg text-gray-700 hover:bg-gray-100 ${
-            isActive
-              ? "border-r-4 border-violet-600 font-semibold bg-violet-50"
-              : ""
-          }`
-        }
-      >
-        Dashboard
-      </NavLink>
-
-      <NavLink
-        to="/projects"
-        className={({ isActive }) =>
-          `px-4 py-2 rounded-l-lg text-gray-700 hover:bg-gray-100 ${
-            isActive
-              ? "border-r-4 border-violet-600 font-semibold bg-violet-50"
-              : ""
-          }`
-        }
-      >
-        Projects
-      </NavLink>
-
-      <NavLink
-        to="/users"
-        className={({ isActive }) =>
-          `px-4 py-2 rounded-l-lg text-gray-700 hover:bg-gray-100 ${
-            isActive
-              ? "border-r-4 border-violet-600 font-semibold bg-violet-50"
-              : ""
-          }`
-        }
-      >
-        Users
-      </NavLink>
-      <NavLink
-        to="/queries"
-        className={({ isActive }) =>
-          `px-4 py-2 rounded-l-lg text-gray-700 hover:bg-gray-100 ${
-            isActive
-              ? "border-r-4 border-violet-600 font-semibold bg-violet-50"
-              : ""
-          }`
-        }
-      >
-        Queries
-      </NavLink>
-    </div>
+    atoken && (
+      <div className="h-screen w-60 bg-white shadow-lg py-6 px-4 flex flex-col space-y-2 border-r border-gray-200">
+        {[
+          { to: "/", label: "Dashboard" },
+          { to: "/projects", label: "Projects" },
+          { to: "/users", label: "Users" },
+          { to: "/queries", label: "Queries" },
+        ].map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className={({ isActive }) =>
+              `px-4 py-2 rounded-md text-gray-700 transition-colors duration-200 ${
+                isActive
+                  ? "bg-violet-100 text-violet-800 font-semibold"
+                  : "hover:bg-gray-100"
+              }`
+            }
+          >
+            {link.label}
+          </NavLink>
+        ))}
+      </div>
+    )
   );
 };
 

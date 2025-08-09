@@ -59,17 +59,17 @@ const AuthorProfile = () => {
             <div className="text-center sm:text-left">
               <h2 className="text-3xl font-bold mb-2">{authorProfile.name}</h2>
               <p className="text-gray-600">{authorProfile.email}</p>
-              <p className="text-gray-600">Year: {authorProfile.yearOfStudy}</p>
+              <p className="text-gray-600"><span className="font-semibold text-gray-800">Year:</span> {authorProfile.yearOfStudy}</p>
               <p className="text-gray-600">
-                Skills: {authorProfile.skills.join(", ")}
+                <span className="font-semibold text-gray-800">Skills:</span> {authorProfile.skills.join(", ")}
               </p>
               <p className="text-gray-600">
-                Technologies: {authorProfile.technologiesKnown.join(", ")}
+                <span className="font-semibold text-gray-800">Technologies:</span> {authorProfile.technologiesKnown.join(", ")}
               </p>
             </div>
           </div>
 
-          {/*   Projects */}
+          {/*    ----------------Projects---------------- */}
           <div>
             <h3 className="text-2xl font-semibold mb-4">
               Projects by {authorProfile.name}

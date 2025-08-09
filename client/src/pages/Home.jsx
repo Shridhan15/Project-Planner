@@ -48,7 +48,7 @@ const Home = () => {
         </button>
       </section>
 
-      {/* Projects Grid */}
+      {/*---------- Projects Grid---------- */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         {filteredProjects.length > 0 ? (
           <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">

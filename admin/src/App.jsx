@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
@@ -10,21 +10,33 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import PrivateRoute from "./components/PrivateRoute";
 import Queries from "./pages/Queries.jsx";
+import { AdminContext } from "./context/AdminContext";
+
 const App = () => {
+  const { atoken } = useContext(AdminContext);
+ 
+  if (!atoken) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-gray-50">
+        <ToastContainer />
+        <div className="w-full   bg-white shadow-md rounded-lg">
+          <Login />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="h-screen flex flex-col">
       <ToastContainer />
       <Navbar />
 
       <div className="flex flex-1">
-        <div className="w-64 fixed top-0 left-0 h-screen z-10">
+        <div className="w-64 fixed top-[64px] left-0 h-[calc(100vh-64px)]">
           <Sidebar />
-        </div>
-
-        <main className="flex-1 ml-64 p-6 overflow-y-auto">
+        </div> 
+        <main className="flex-1 ml-64 p-6 overflow-y-auto  ">
           <Routes>
-            <Route path="/login" element={<Login />} />
-
             <Route
               path="/"
               element={
@@ -46,14 +58,6 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <Projects />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
                 </PrivateRoute>
               }
             />

@@ -20,12 +20,13 @@ const Projects = () => {
   const handleDelete = async (projectId) => {
     try {
       const res = await axios.delete(
-        `${backendUrl}/api/admin/project/delete/${projectId}`,{headers: { atoken  } }
+        `${backendUrl}/api/admin/project/delete/${projectId}`,
+        { headers: { atoken } }
       );
       const data = res.data;
       if (data.success) {
         toast.success("Project deleted successfully");
-        getAllProjects();  
+        getAllProjects();
       } else {
         toast.error(data.message || "Failed to delete project");
       }
@@ -34,16 +35,16 @@ const Projects = () => {
       toast.error("Error deleting project");
     }
   };
- 
+
   const sortedProjects = [...(projects || [])].sort((a, b) => {
     if (a.status === b.status) return 0;
     return a.status === "open" ? -1 : 1;
   });
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">All Projects</h2>
-      <div className="overflow-x-auto rounded-lg shadow">
+    <div className="bg-white rounded-lg shadow p-6 min-h-[calc(100vh-120px)]">
+      <h2 className="text-2xl font-bold mb-8">All Projects</h2>
+      <div className="overflow-x-auto rounded-lg">
         <table className="min-w-full bg-white">
           <thead>
             <tr className="bg-gray-100 text-left text-sm font-semibold text-gray-700">
