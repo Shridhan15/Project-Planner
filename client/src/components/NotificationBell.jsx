@@ -119,20 +119,19 @@ const NotificationBell = ({ token }) => {
     }
   };
 
-  const handleAccept = async (project) => {
+  const handleAccept = async (requestId, projectId) => {
     try {
       const response = await axios.put(
-        `${backendUrl}/api/project/accept-request/${project}`,
+        `${backendUrl}/api/project/accept-request/${requestId}`,
         {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
+
       if (response.data.success) {
         toast.success("Join request accepted successfully");
         setNotifications((prev) =>
           prev.map((n) =>
-            n.project._id === project._id ? { ...n, isRead: true } : n
+            n.project._id === projectId ? { ...n, isRead: true } : n
           )
         );
         setHasUnread(false);
@@ -144,20 +143,22 @@ const NotificationBell = ({ token }) => {
       toast.error(error.message);
     }
   };
-  const handleReject = async (project) => {
+
+  const handleReject = async (requestId, projectId) => {
     try {
       const response = await axios.put(
-        `${backendUrl}/api/project/reject-request/${project}`,
+        `${backendUrl}/api/project/reject-request/${requestId}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       if (response.data.success) {
-        toast.success("Join request reject.");
+        toast.success("Join request rejected.");
         setNotifications((prev) =>
           prev.map((n) =>
-            n.project._id === project._id ? { ...n, isRead: true } : n
+            n.project._id === projectId ? { ...n, isRead: true } : n
           )
         );
         setHasUnread(false);
@@ -239,13 +240,17 @@ const NotificationBell = ({ token }) => {
                 {notif.type === "joinRequest" && (
                   <div className="flex justify-start gap-3 mt-2">
                     <button
-                      onClick={() => handleAccept(notif.project)}
+                      onClick={() =>
+                        handleAccept(notif.joinRequest, notif.project._id)
+                      }
                       className=" cursor-pointer px-4 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
                     >
                       Accept
                     </button>
                     <button
-                      onClick={() => handleReject(notif.project)}
+                      onClick={() =>
+                        handleReject(notif.joinRequest, notif.project._id)
+                      }
                       className=" cursor-pointer px-4 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
                     >
                       Reject

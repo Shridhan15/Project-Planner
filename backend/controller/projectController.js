@@ -99,14 +99,16 @@ const sendJoinRequest = async (req, res) => {
       <p>Cheers,<br/>Project Partner Team</p>
     `;
 
-        const notification = await Notification.create({
+        let notification = await Notification.create({
             recipient: project.author._id,
             sender: sender._id,
             project: projectId,
             type: 'joinRequest',
+            joinRequest: joinRequest._id,
             //  
             message: `You have a new join request for your project ${project.title} from ${sender.name}.`,
         });
+        notification = await notification.populate('sender', 'name _id');
 
         // Emit in real time (if online)
         const socketId = userSocketMap.get(author._id.toString());
@@ -149,70 +151,71 @@ const closeProject = async (req, res) => {
 
 
 const acceptJoinRequest = async (req, res) => {
-
     try {
+        const { requestId } = req.params; // ✅ join request ID from frontend
+        const request = await JoinRequest.findByIdAndUpdate(
+            requestId,
+            { status: 'Accepted' },
+            { new: true }
+        );
 
-        const { project } = req.params;
-        const request = await JoinRequest.findOneAndUpdate({ project }, { status: 'Accepted' }, { new: true });
         if (!request) {
             return res.status(404).json({ success: false, message: "Join request not found" });
         }
-        const projectData = await Project.findById(project).populate("author", "name email mobileNumber");
-        if (!projectData) {
-            return res.status(404).json({ success: false, message: "Project not found" });
-        }
+
+        const projectData = await Project.findById(request.project)
+            .populate("author", "name email mobileNumber");
+
         const notification = await Notification.create({
             recipient: request.sender,
             sender: request.receiver,
-            project: project,
-            //  
+            project: request.project,
+            joinRequest: request._id, // ✅ keep linked
             type: 'responseToRequest',
-            message: `Your join request for the project ${projectData.title} has been accepted by the ${projectData.author.name}.`,
+            message: `Your join request for the project ${projectData.title} has been accepted by ${projectData.author.name}.`,
         });
+
         const socketId = userSocketMap.get(request.sender.toString());
-        if (socketId) {
-            io.to(socketId).emit("new_notification", notification);
-            console.log("Real-time notification sent to:", socketId);
-        } else {
-            console.log("Author not online (socket not found).");
-        }
+        if (socketId) io.to(socketId).emit("new_notification", notification);
+
         res.json({ success: true, message: "Join request accepted", request });
-
     } catch (error) {
-        console.error("Error accepting join request:(in controller)", error);
-        res.json({ success: false, message: error.message });
-
+        console.error("Error accepting join request:", error);
+        res.status(500).json({ success: false, message: error.message });
     }
-}
+};
 
 const rejectJoinRequest = async (req, res) => {
 
     try {
 
-        const { project } = req.params;
-        const request = await JoinRequest.findOneAndUpdate({ project }, { status: 'Rejected' }, { new: true });
+        const { requestId } = req.params; // ✅ join request ID from frontend
+        const request = await JoinRequest.findByIdAndUpdate(
+            requestId,
+            { status: 'Rejected' },
+            { new: true }
+        );
         if (!request) {
             return res.status(404).json({ success: false, message: "Join request not found" });
         }
-        const projectData = await Project.findById(project).populate("author", "name email mobileNumber");
+        const projectData = await Project.findById(request.project).populate("author", "name email mobileNumber");
         if (!projectData) {
             return res.status(404).json({ success: false, message: "Project not found" });
         }
         const notification = await Notification.create({
             recipient: request.sender,
             sender: request.receiver,
-            project: project,
+            project: request.project,
             //  
+            joinRequest: request._id,
             type: 'responseToRequest',
             message: `Your join request for the project ${projectData.title} has been rejected by the ${projectData.author.name}.`,
         });
+
         const socketId = userSocketMap.get(request.sender.toString());
-        if (socketId) {
-            io.to(socketId).emit("new_notification", notification);
-            console.log("Real-time notification sent to:", socketId);
-        } else {
-            console.log("Author not online (socket not found).");
-        }
+        if (socketId) io.to(socketId).emit("new_notification", notification);
+        
+        
         res.json({ success: true, message: "Join request rejected", request });
 
     } catch (error) {

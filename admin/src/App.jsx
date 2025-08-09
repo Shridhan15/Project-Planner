@@ -34,8 +34,8 @@ const App = () => {
       <div className="flex flex-1">
         <div className="w-64 fixed top-[64px] left-0 h-[calc(100vh-64px)]">
           <Sidebar />
-        </div> 
-        <main className="flex-1 ml-64 p-6 overflow-y-auto  ">
+        </div>
+        <main className="flex-1 mt-16 ml-64 p-6 overflow-y-auto">
           <Routes>
             <Route
               path="/"

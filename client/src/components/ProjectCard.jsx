@@ -83,8 +83,9 @@ const ProjectCard = ({ project }) => {
           : ""
       }`}
     >
+      
       <img
-        className="w-full h-48 object-cover rounded-md mb-4"
+        className="w-full h-48 object-contain rounded-md mb-4"
         src={project.image || assets.default_image}
         alt={project.title}
       />

@@ -20,7 +20,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               `px-4 py-2 rounded-md text-gray-700 transition-colors duration-200 ${
                 isActive
-                  ? "bg-violet-100 text-violet-800 font-semibold"
+                  ? "bg-violet-100 border-r-4 border-violet-500   text-violet-800 font-semibold"
                   : "hover:bg-gray-100"
               }`
             }

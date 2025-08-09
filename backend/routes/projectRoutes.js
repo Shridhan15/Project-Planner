@@ -13,7 +13,7 @@ projectRouter.get('/getprojects', getProjects);
 
 projectRouter.post('/send-request', authUser, sendJoinRequest); 
 projectRouter.put('/close-project/:projectId',authUser,closeProject)
-projectRouter.put('/accept-request/:project',authUser,acceptJoinRequest)
-projectRouter.put('/reject-request/:project',authUser,rejectJoinRequest)
+projectRouter.put('/accept-request/:requestId',authUser,acceptJoinRequest)
+projectRouter.put('/reject-request/:requestId',authUser,rejectJoinRequest)
 
 export default projectRouter;

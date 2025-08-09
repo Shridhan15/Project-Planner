@@ -10,7 +10,7 @@ const Navbar = () => {
     navigate("/login");
   };
   return (
-    <nav className="bg-white z-10 shadow-md px-6 py-3 flex items-center justify-between">
+    <nav className= "fixed top-0 left-0 w-full bg-white z-10 shadow-md px-6 py-3 flex items-center justify-between">
       <div className="flex items-center space-x-3">
         <img
           src={assets.logo}

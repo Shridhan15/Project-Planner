@@ -187,7 +187,7 @@ const getJoinRequests = async (req, res) => {
             requestsByProject[req.project.toString()] = req.status;
         });
 
-        res.json({ success:true,requestsByProject: requestsByProject });
+        res.json({ success: true, requestsByProject: requestsByProject });
 
     } catch (error) {
         console.error("Error fetching join requests:", error);
@@ -197,4 +197,24 @@ const getJoinRequests = async (req, res) => {
 
 }
 
-export { registerUser, loginUser, fetchUserProfile, updateProfile, getUserProjects, getAuthorProfile, getMe, Support, getJoinRequests };
+
+const deleteAccount = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        await Notification.deleteMany({ recipient: userId });
+        await Notification.deleteMany({ sender: userId });
+        await Project.deleteMany({ author: userId });
+        await JoinRequest.deleteMany({ sender: userId });
+        await JoinRequest.deleteMany({ receiver: userId });
+        await Query.deleteMany({ email: userId.email });
+        await User.findByIdAndDelete(userId);
+        res.json({ success: true, message: "Account deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting account:(In controller)", error);
+        res.json({ success: false, message: error.message || "Internal server error" });
+    }
+}
+
+
+
+export { registerUser, loginUser, fetchUserProfile, updateProfile, getUserProjects, getAuthorProfile, getMe, Support, getJoinRequests, deleteAccount };

@@ -4,6 +4,7 @@ const notificationSchema = new mongoose.Schema({
     recipient: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     project: { type: mongoose.Schema.Types.ObjectId, ref: 'Project', required: true },
+    joinRequest: { type: mongoose.Schema.Types.ObjectId, ref: 'JoinRequest' }, 
     message: { type: String, required: true },
     isRead: { type: Boolean, default: false },
     type: { type: String, enum: ['joinRequest', 'responseToRequest'], required: true },
