@@ -82,7 +82,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="mt-10 max-w-4xl mx-auto px-6 sm:px-8 lg:px-10 py-8 bg-white shadow-xl rounded-xl">
+    <div className="mt-25 max-w-4xl mx-auto px-6 sm:px-8 lg:px-10 py-8 bg-white shadow-xl rounded-xl">
       <h1 className="text-3xl font-bold text-gray-800 mb-6 border-b pb-2">
         Dashboard
       </h1>
@@ -112,7 +112,7 @@ const Profile = () => {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate("/edit-profile")}
-                className="ring-1 ring-gray-300 hover:ring-gray-400 focus:ring-gray-500 rounded-md px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
+                className=" cursor-pointer ring-1 ring-gray-300 hover:ring-gray-400 focus:ring-gray-500 rounded-md px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
               >
                 Edit
               </button>

@@ -27,7 +27,7 @@ const EditProfile = () => {
       formData.append("email", email ? email : userProfile.email);
       formData.append(
         "mobileNumber",
-        mobileNumber ? mobileNumber : userProfile.mobileNumber
+        mobileNumber ? mobileNumber : ""
       );
       formData.append(
         "yearOfStudy",
@@ -68,7 +68,7 @@ const EditProfile = () => {
     userProfile && (
       <form
         onSubmit={handleSubmit}
-        className="max-w-4xl mx-auto mt-12 bg-white p-8 rounded-xl shadow-xl space-y-6"
+        className="max-w-4xl mx-auto mt-25 bg-white p-8 rounded-xl shadow-xl space-y-6"
       >
         <h2 className="text-3xl font-bold text-center text-gray-800">
           Edit Profile
@@ -154,6 +154,7 @@ const EditProfile = () => {
               <input
                 name="email"
                 required
+                disabled
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 defaultValue={userProfile.email}

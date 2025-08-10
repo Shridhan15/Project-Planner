@@ -68,7 +68,7 @@ const Login = () => {
   return (
     <form
       onSubmit={onSubmitHandler}
-      className="flex flex-col items-center justify-center gap-4 p-4 w-full max-w-md mx-auto mt-20 bg-gray-100 shadow-lg rounded-lg"
+      className="flex flex-col  items-center justify-center gap-4 p-4 w-full max-w-md mx-auto mt-25 py-10 bg-gray-100 shadow-lg rounded-lg"
     >
       {/* <div className="cursor-pointer text-blue-500 hover:underline font-light">
         {currentState === "Login" ? (

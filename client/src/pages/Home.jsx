@@ -30,7 +30,7 @@ const Home = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 mt-19 min-h-screen">
       {/* Hero Section */}
       <section className="text-center py-16 bg-blue-100 px-4">
         <h1 className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-4">

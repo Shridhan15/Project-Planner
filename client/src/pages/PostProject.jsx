@@ -60,7 +60,7 @@ const PostProject = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-25">
       <h2 className="text-2xl font-bold mb-4 text-center">
         {" "}
         Post a New Project

@@ -10,12 +10,22 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile.jsx";
 import AuthorProfile from "./pages/AuthorProfile.jsx";
-import SupportBox from "./components/SupportBox.jsx";
 
 const App = () => {
   return (
-    <div>
-      <ToastContainer />
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+      <ToastContainer
+        theme="colored"
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -39,7 +49,7 @@ const App = () => {
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/author/:authorId" element={<AuthorProfile />} />
       </Routes>
-      <SupportBox />
+      {/* <Footer /> */}
     </div>
   );
 };

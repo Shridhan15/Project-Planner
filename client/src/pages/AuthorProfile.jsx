@@ -46,7 +46,7 @@ const AuthorProfile = () => {
   console.log("author projects:", authorProjects);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="max-w-5xl mx-auto mt-20 px-4 py-8">
       {authorProfile ? (
         <>
           {/*   Header */}
