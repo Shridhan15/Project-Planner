@@ -108,7 +108,12 @@ const sendJoinRequest = async (req, res) => {
             //  
             message: `You have a new join request for your project ${project.title} from ${sender.name}.`,
         });
-        notification = await notification.populate('sender', 'name _id');
+        notification = await notification.populate([
+            { path: 'sender', select: 'name _id' },
+            { path: 'joinRequest', select: 'status _id sender project receiver' },
+        ]);
+
+        
 
         // Emit in real time (if online)
         const socketId = userSocketMap.get(author._id.toString());
@@ -170,7 +175,7 @@ const acceptJoinRequest = async (req, res) => {
             recipient: request.sender,
             sender: request.receiver,
             project: request.project,
-            joinRequest: request._id, // ✅ keep linked
+            joinRequest: request._id,
             type: 'responseToRequest',
             message: `Your join request for the project ${projectData.title} has been accepted by ${projectData.author.name}.`,
         });
@@ -189,7 +194,7 @@ const rejectJoinRequest = async (req, res) => {
 
     try {
 
-        const { requestId } = req.params; // ✅ join request ID from frontend
+        const { requestId } = req.params; //   join request ID from frontend
         const request = await JoinRequest.findByIdAndUpdate(
             requestId,
             { status: 'Rejected' },
@@ -206,7 +211,6 @@ const rejectJoinRequest = async (req, res) => {
             recipient: request.sender,
             sender: request.receiver,
             project: request.project,
-            //  
             joinRequest: request._id,
             type: 'responseToRequest',
             message: `Your join request for the project ${projectData.title} has been rejected by the ${projectData.author.name}.`,
@@ -214,8 +218,8 @@ const rejectJoinRequest = async (req, res) => {
 
         const socketId = userSocketMap.get(request.sender.toString());
         if (socketId) io.to(socketId).emit("new_notification", notification);
-        
-        
+
+
         res.json({ success: true, message: "Join request rejected", request });
 
     } catch (error) {

@@ -130,10 +130,21 @@ const NotificationBell = ({ token }) => {
       if (response.data.success) {
         toast.success("Join request accepted successfully");
         setNotifications((prev) =>
-          prev.map((n) =>
-            n.project._id === projectId ? { ...n, isRead: true } : n
-          )
+          prev.map((n) => {
+            if (n.joinRequest && n.joinRequest._id === requestId) {
+              return {
+                ...n,
+                isRead: true,
+                joinRequest: { ...n.joinRequest, status: "Accepted" },
+              };
+            } else if (n.project._id === projectId) {
+              return { ...n, isRead: true };
+            } else {
+              return n;
+            }
+          })
         );
+
         setHasUnread(false);
       } else {
         toast.error(response.data.message || "Failed to accept join request");
@@ -143,6 +154,8 @@ const NotificationBell = ({ token }) => {
       toast.error(error.message);
     }
   };
+
+  console.log("Notifications:", notifications);
 
   const handleReject = async (requestId, projectId) => {
     try {
@@ -157,9 +170,19 @@ const NotificationBell = ({ token }) => {
       if (response.data.success) {
         toast.success("Join request rejected.");
         setNotifications((prev) =>
-          prev.map((n) =>
-            n.project._id === projectId ? { ...n, isRead: true } : n
-          )
+          prev.map((n) => {
+            if (n.joinRequest && n.joinRequest._id === requestId) {
+              return {
+                ...n,
+                isRead: true,
+                joinRequest: { ...n.joinRequest, status: "Rejected" },
+              };
+            } else if (n.project._id === projectId) {
+              return { ...n, isRead: true };
+            } else {
+              return n;
+            }
+          })
         );
         setHasUnread(false);
       } else {
@@ -237,25 +260,45 @@ const NotificationBell = ({ token }) => {
                     </p>
                   )}
 
-                {notif.type === "joinRequest" && (
-                  <div className="flex justify-start gap-3 mt-2">
-                    <button
-                      onClick={() =>
-                        handleAccept(notif.joinRequest, notif.project._id)
-                      }
-                      className=" cursor-pointer px-4 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
-                    >
-                      Accept
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleReject(notif.joinRequest, notif.project._id)
-                      }
-                      className=" cursor-pointer px-4 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
-                    >
-                      Reject
-                    </button>
-                  </div>
+                {notif.type === "joinRequest" && notif.joinRequest?.status && (
+                  <>
+                    {notif.joinRequest.status === "Accepted" && (
+                      <p className="text-sm text-green-700 bg-green-100 px-3 py-1 rounded inline-block mt-2">
+                        Request Accepted
+                      </p>
+                    )}
+                    {notif.joinRequest.status === "Rejected" && (
+                      <p className="text-sm text-red-700 bg-red-100 px-3 py-1 rounded inline-block mt-2">
+                        Request Rejected
+                      </p>
+                    )}
+                    {notif.joinRequest.status === "Sent" && (
+                      <div className="flex justify-start gap-3 mt-2">
+                        <button
+                          onClick={() =>
+                            handleAccept(
+                              notif.joinRequest._id,
+                              notif.project._id
+                            )
+                          }
+                          className="cursor-pointer px-4 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleReject(
+                              notif.joinRequest._id,
+                              notif.project._id
+                            )
+                          }
+                          className="cursor-pointer px-4 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ))

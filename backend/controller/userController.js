@@ -7,6 +7,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { sendMail } from "../config/sendMail.js";
 import Query from "../models/Query.js";
 import JoinRequest from "../models/joinRequest.js";
+import Notification from "../models/Notification.js";
 
 const registerUser = async (req, res) => {
 

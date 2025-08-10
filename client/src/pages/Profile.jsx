@@ -3,12 +3,15 @@ import { ProjectContext } from "../../context/ProjectContext";
 import { assets } from "../assets/assets";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Profile = () => {
   const {
     userProfile,
+    setUserProfile,
     fetchUserProfile,
     token,
+    setToken,
     backendUrl,
     navigate,
     projectsData,
@@ -45,6 +48,12 @@ const Profile = () => {
   }, [myProjects]);
 
   const handleDelete = async () => {
+    console.log("Sending delete request with token:", token);
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+    if (!confirmed) return;
+
     try {
       const response = await axios.delete(
         backendUrl + "/api/user/delete-account",
@@ -60,7 +69,9 @@ const Profile = () => {
           position: "top-center",
           autoClose: 3000,
         });
-        setTimeout(() => navigate("/"), 3000);
+        setUserProfile(null);
+        setToken(null);
+        localStorage.removeItem("token");
       } else {
         toast.error("Error deleting account");
       }
@@ -105,7 +116,10 @@ const Profile = () => {
               >
                 Edit
               </button>
-              <button className="ring-1 cursor-pointer ring-gray-300 bg-red-500 hover:bg-red-600 text-white rounded-md px-4 py-2 transition">
+              <button
+                onClick={() => handleDelete()}
+                className="ring-1 cursor-pointer ring-gray-300 bg-red-500 hover:bg-red-600 text-white rounded-md px-4 py-2 transition"
+              >
                 Delete Account
               </button>
             </div>

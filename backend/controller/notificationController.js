@@ -4,14 +4,19 @@ const getAllNotifications = async (req, res) => {
   try {
     const notifications = await Notification.find({ recipient: req.user._id })
       .populate('sender', 'name')
+      .populate({
+        path: 'joinRequest',
+        select: 'status', 
+      })
       .sort({ createdAt: -1 });
+
 
     res.json({ success: true, notifications });
   } catch (error) {
     console.error("Error fetching notifications:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
-} 
+}
 
 const markNotificationAsRead = async (req, res) => {
   try {
@@ -52,11 +57,11 @@ const markAllRead = async (req, res) => {
 
 
 
-const deleteNotification= async(req,res)=>{
+const deleteNotification = async (req, res) => {
   try {
 
-    const notifId= req.params.id;
-    const notification= await Notification.findOneAndDelete({
+    const notifId = req.params.id;
+    const notification = await Notification.findOneAndDelete({
       _id: notifId,
       recipient: req.user._id
     });
@@ -69,8 +74,8 @@ const deleteNotification= async(req,res)=>{
   } catch (error) {
     console.error("Error deleting notification:", error);
     res.status(500).json({ success: false, message: "Internal server error" });
-    
+
   }
 }
 
-export { getAllNotifications, markNotificationAsRead, markAllRead,deleteNotification};
+export { getAllNotifications, markNotificationAsRead, markAllRead, deleteNotification };
