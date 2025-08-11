@@ -12,6 +12,7 @@ const Home = () => {
     isAuthenticated,
     recommendedProjects,
     searchTerm,
+    userProfile
   } = useContext(ProjectContext);
 
   useEffect(() => {
@@ -29,7 +30,7 @@ const Home = () => {
   };
 
   return (
-    <div className="bg-gray-50 mt-19 min-h-screen">
+    <div className="bg-gray-50 mt-19 min-h-screen ">
       {/* ---------- Hero Section ---------- */}
       <section className="text-center py-16 bg-gradient-to-r from-blue-100 to-blue-200 px-4 shadow-md">
         <h1 className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-4">
@@ -48,7 +49,7 @@ const Home = () => {
       </section>
 
       {/* ---------- Recommended Projects ---------- */}
-      {!searchTerm && (
+      {!searchTerm && userProfile?.skills!="" && (
         <section className="bg-white py-12 px-4 shadow-inner border-t border-gray-200">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-bold text-blue-800 mb-2 text-center">

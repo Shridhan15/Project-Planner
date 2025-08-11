@@ -59,7 +59,7 @@ const Navbar = () => {
               src={assets.logo}
               alt="logo"
             />
-            <span className="font-bold text-2xl text-violet-500">
+            <span className="font-bold hidden md:inline text-2xl text-violet-500">
               ProjectPartner
             </span>
           </Link>
