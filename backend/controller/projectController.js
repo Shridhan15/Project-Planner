@@ -49,7 +49,7 @@ const addProject = async (req, res) => {
 
 const getProjects = async (req, res) => {
     try {
-        const projects = await Project.find().populate("author", "name email mobileNumber");
+        const projects = await Project.find().populate("author", "_id name email mobileNumber");
         res.json({ success: true, projects });
     } catch (error) {
         console.error("Error fetching projects:", error);
@@ -113,7 +113,7 @@ const sendJoinRequest = async (req, res) => {
             { path: 'joinRequest', select: 'status _id sender project receiver' },
         ]);
 
-        
+
 
         // Emit in real time (if online)
         const socketId = userSocketMap.get(author._id.toString());

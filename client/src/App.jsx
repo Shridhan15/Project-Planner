@@ -13,7 +13,7 @@ import AuthorProfile from "./pages/AuthorProfile.jsx";
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
+    <div className="min-h-screen bg-white   transition-colors duration-200">
       <ToastContainer
         theme="colored"
         position="top-right"

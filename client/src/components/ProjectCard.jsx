@@ -17,8 +17,8 @@ const ProjectCard = ({ project }) => {
   } = useContext(ProjectContext);
   const [isClosed, setIsClosed] = useState(false);
   // fetchUserProfile(); // Ensure user profile is fetched before rendering
-  console.log("User profile in ProjectCard:", userProfile);
-  console.log("Project in ProjectCard:", project);
+  // console.log("User profile in ProjectCard:", userProfile);
+  // console.log("Project in ProjectCard:", project);
 
   const handleRequestJoin = async (e) => {
     e.preventDefault();

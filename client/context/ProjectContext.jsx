@@ -19,6 +19,9 @@ const ProjectContextProvider = (props) => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [hasUnread, setHasUnread] = useState(false);
   const [requestStatusByProject, setRequestStatusByProject] = useState({});
+  const [recommendedProjects, setRecommendedProjects] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   const socket = useRef(null); // ✅ socket managed via ref
 
@@ -104,27 +107,27 @@ const ProjectContextProvider = (props) => {
     }
   };
 
-  useEffect(()=>{
-
-    const fetchSentRequests=async()=>{
+  useEffect(() => {
+    const fetchSentRequests = async () => {
       try {
-        const response= await axios.get(backendUrl + "/api/user/join-requests", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          backendUrl + "/api/user/join-requests",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         if (response.data.success) {
           const requests = response.data.requestsByProject;
           setRequestStatusByProject(requests);
         }
       } catch (error) {
         console.error("Error fetching sent requests:", error);
-        
       }
-    }
-    if(userProfile?._id) {
+    };
+    if (userProfile?._id) {
       fetchSentRequests();
     }
-
-  },[userProfile]) 
+  }, [userProfile]);
 
   useEffect(() => {
     if (token) {
@@ -149,6 +152,39 @@ const ProjectContextProvider = (props) => {
     setFilteredProjects(projectsData);
   }, [projectsData]);
 
+
+  // normalize means to standardize the format of data i.e., making all strings lowercase, trimming whitespace, and splitting by commas, so that we can easily match skills and technologies
+  const normalizeArray = (arr) => {
+    return arr
+      .flatMap((item) => item.split(","))
+      .map((str) => str.trim().toLowerCase())
+      .filter(Boolean); 
+  };
+
+  useEffect(() => {
+    if (projectsData.length > 0 && userProfile) {
+      const userSkills = normalizeArray(userProfile.skills || []);
+      const userTechs = normalizeArray(userProfile.technologiesKnown || []);
+
+      const recommended = projectsData 
+        .filter((project) => project.author._id !== userProfile._id) 
+        .filter((project) => {
+          const projectSkills = normalizeArray(project.skillsRequired || []);
+          const projectTechs = normalizeArray(project.techStack || []);
+          return (
+            projectSkills.some(
+              (skill) => userSkills.includes(skill) || userTechs.includes(skill)
+            ) ||
+            projectTechs.some(
+              (tech) => userSkills.includes(tech) || userTechs.includes(tech)
+            )
+          );
+        });
+      console.log("✅ Recommended Projects:", recommended);
+      setRecommendedProjects(recommended);
+    }
+  }, [projectsData, userProfile]);
+
   const value = {
     backendUrl,
     token,
@@ -172,7 +208,10 @@ const ProjectContextProvider = (props) => {
     unreadCount,
     hasUnread,
     requestStatusByProject,
-    setRequestStatusByProject
+    setRequestStatusByProject,
+    recommendedProjects,
+    searchTerm,
+    setSearchTerm
   };
 
   return (

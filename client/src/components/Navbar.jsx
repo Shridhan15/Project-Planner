@@ -13,10 +13,11 @@ const Navbar = () => {
     setUserProfile,
     projectsData,
     setFilteredProjects,
+    searchTerm,
+    setSearchTerm
   } = useContext(ProjectContext);
 
-  const location = useLocation();
-  const [searchTerm, setSearchTerm] = useState("");
+  const location = useLocation(); 
 
   const logout = () => {
     setUserProfile(null);
@@ -48,7 +49,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-md w-full fixed top-0 left-0 ">
+    <nav className="bg-white z-10 shadow-md w-full fixed top-0 left-0 ">
       <div className="flex justify-between items-center p-2">
         {/* Left: Logo */}
         <div>
