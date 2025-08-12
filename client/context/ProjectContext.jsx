@@ -22,7 +22,6 @@ const ProjectContextProvider = (props) => {
   const [recommendedProjects, setRecommendedProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-
   const socket = useRef(null); // ✅ socket managed via ref
 
   const navigate = useNavigate();
@@ -85,7 +84,10 @@ const ProjectContextProvider = (props) => {
 
         // Connect socket only once
         if (!socket.current) {
-          socket.current = io(backendUrl);
+          socket.current = io(backendUrl, {
+            transports: ["websocket"], // Force WebSocket
+            withCredentials: true,
+          });
         }
 
         // Register user
@@ -152,13 +154,12 @@ const ProjectContextProvider = (props) => {
     setFilteredProjects(projectsData);
   }, [projectsData]);
 
-
   // normalize means to standardize the format of data i.e., making all strings lowercase, trimming whitespace, and splitting by commas, so that we can easily match skills and technologies
   const normalizeArray = (arr) => {
     return arr
       .flatMap((item) => item.split(","))
       .map((str) => str.trim().toLowerCase())
-      .filter(Boolean); 
+      .filter(Boolean);
   };
 
   useEffect(() => {
@@ -166,8 +167,8 @@ const ProjectContextProvider = (props) => {
       const userSkills = normalizeArray(userProfile.skills || []);
       const userTechs = normalizeArray(userProfile.technologiesKnown || []);
 
-      const recommended = projectsData 
-        .filter((project) => project.author._id !== userProfile._id) 
+      const recommended = projectsData
+        .filter((project) => project.author._id !== userProfile._id)
         .filter((project) => {
           const projectSkills = normalizeArray(project.skillsRequired || []);
           const projectTechs = normalizeArray(project.techStack || []);
@@ -211,7 +212,7 @@ const ProjectContextProvider = (props) => {
     setRequestStatusByProject,
     recommendedProjects,
     searchTerm,
-    setSearchTerm
+    setSearchTerm,
   };
 
   return (
