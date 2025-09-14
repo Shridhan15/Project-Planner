@@ -3,6 +3,7 @@ import { assets } from "../assets/assets";
 import { Link, useLocation } from "react-router-dom";
 import { ProjectContext } from "../../context/ProjectContext";
 import NotificationBell from "./NotificationBell";
+import { MessageCircle } from "lucide-react";
 
 const Navbar = () => {
   const {
@@ -14,10 +15,10 @@ const Navbar = () => {
     projectsData,
     setFilteredProjects,
     searchTerm,
-    setSearchTerm
+    setSearchTerm,
   } = useContext(ProjectContext);
 
-  const location = useLocation(); 
+  const location = useLocation();
 
   const logout = () => {
     setUserProfile(null);
@@ -49,7 +50,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white z-10 shadow-md w-full fixed top-0 left-0 ">
+    <nav className="bg-white z-100 shadow-md w-full fixed top-0 left-0 ">
       <div className="flex justify-between items-center p-2">
         {/* Left: Logo */}
         <div>
@@ -81,6 +82,15 @@ const Navbar = () => {
         {/*  Notification + Profile */}
         <div className="flex items-center gap-4 mr-4">
           {token && <NotificationBell token={token} />}
+          {token && token !== "" && (
+            <div className="mr-2">
+              <Link to="/messages" className="relative">
+                <MessageCircle className="h-7 w-7 text-gray-600 hover:text-violet-500 cursor-pointer" />
+                {/* Badge for unread messages */}
+                 
+              </Link>
+            </div>
+          )}
 
           <div className="group relative">
             <img

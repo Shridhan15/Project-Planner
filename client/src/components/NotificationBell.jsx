@@ -205,7 +205,7 @@ const NotificationBell = ({ token }) => {
       )}
 
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-80 bg-slate-100 shadow-md rounded-md z-50 p-2 max-h-180 overflow-y-auto">
+        <div className="absolute right-0 mt-2 w-100 bg-slate-100 shadow-md rounded-md z-50 p-2 max-h-180 overflow-y-auto">
           {notifications.length > 0 && hasUnread && (
             <a
               onClick={handleMarkAllRead}

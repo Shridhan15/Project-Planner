@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { assets } from "../assets/assets";
 
@@ -9,6 +9,7 @@ const AuthorProfile = () => {
   const { authorId } = useParams();
   const [authorProfile, setAuthorProfile] = useState(null);
   const [authorProjects, setAuthorProjects] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (projectsData) {
@@ -42,7 +43,15 @@ const AuthorProfile = () => {
   useEffect(() => {
     getAuthorProfile();
   }, [authorId]);
-  console.log("projectsData in AuthorProfile:", projectsData);
+
+  
+  const handleSendMessage = () => {
+    navigate("/messages", {
+      state: { authorId: authorProfile._id, authorName: authorProfile.name },
+    });
+  };
+
+  console.log("author profile in AuthorProfile:", authorProfile);
   console.log("author projects:", authorProjects);
 
   return (
@@ -51,21 +60,41 @@ const AuthorProfile = () => {
         <>
           {/*   Header */}
           <div className="flex flex-col sm:flex-row items-center gap-6 p-6 bg-white shadow-md rounded-lg mb-10">
+            {/* Profile Image */}
             <img
               src={authorProfile.profileImage || assets.profile_icon}
               alt={authorProfile.name}
               className="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
             />
-            <div className="text-center sm:text-left">
+
+            {/* Profile Info */}
+            <div className="flex-1 text-center sm:text-left">
               <h2 className="text-3xl font-bold mb-2">{authorProfile.name}</h2>
               <p className="text-gray-600">{authorProfile.email}</p>
-              <p className="text-gray-600"><span className="font-semibold text-gray-800">Year:</span> {authorProfile.yearOfStudy}</p>
               <p className="text-gray-600">
-                <span className="font-semibold text-gray-800">Skills:</span> {authorProfile.skills.join(", ")}
+                <span className="font-semibold text-gray-800">Year:</span>{" "}
+                {authorProfile.yearOfStudy}
               </p>
               <p className="text-gray-600">
-                <span className="font-semibold text-gray-800">Technologies:</span> {authorProfile.technologiesKnown.join(", ")}
+                <span className="font-semibold text-gray-800">Skills:</span>{" "}
+                {authorProfile.skills.join(", ")}
               </p>
+              <p className="text-gray-600">
+                <span className="font-semibold text-gray-800">
+                  Technologies:
+                </span>{" "}
+                {authorProfile.technologiesKnown.join(", ")}
+              </p>
+
+              {/* Send Message Button */}
+              <div className="mt-4">
+                <button
+                  onClick={handleSendMessage}
+                  className="cursor-pointer px-6 py-2 rounded-lg bg-violet-500 text-white font-semibold shadow-md hover:bg-violet-600 transition duration-200"
+                >
+                  Send Message
+                </button>
+              </div>
             </div>
           </div>
 
@@ -104,9 +133,7 @@ const AuthorProfile = () => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">
-                No projects found for this user.
-              </p>
+              <p className="text-gray-500">No projects found for this user.</p>
             )}
           </div>
         </>

@@ -49,7 +49,7 @@ const Home = () => {
       </section>
 
       {/* ---------- Recommended Projects ---------- */}
-      {!searchTerm && userProfile?.skills!="" && (
+      {!searchTerm &&  userProfile && userProfile?.skills!="" && (
         <section className="bg-white py-12 px-4 shadow-inner border-t border-gray-200">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-bold text-blue-800 mb-2 text-center">

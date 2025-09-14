@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-gray-900 text-gray-300 py-6 px-4 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between mt-8">
+    <footer className="w-full bg-gray-900 text-gray-300 py-6 px-4 border-t border-gray-800 flex flex-col md:flex-row items-center justify-between ">
       <div className="flex flex-col md:flex-row items-center gap-2 md:gap-6 text-sm">
         <span className="font-semibold">Project Partner</span>
         <span>© {new Date().getFullYear()} All rights reserved.</span>

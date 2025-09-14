@@ -12,6 +12,7 @@ import EditProfile from "./pages/EditProfile.jsx";
 import AuthorProfile from "./pages/AuthorProfile.jsx";
 import { ProjectContext } from "../context/ProjectContext.jsx";
 import SupportBox from "./components/SupportBox.jsx";
+import MessagesPage from "./pages/MessagePage.jsx";
 
 const App = () => {
   const { userProfile } = useContext(ProjectContext);
@@ -43,6 +44,7 @@ const App = () => {
           />
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/author/:authorId" element={<AuthorProfile />} />
+          <Route path='/messages' element={<MessagesPage />} />
         </Routes>
       </main>
  

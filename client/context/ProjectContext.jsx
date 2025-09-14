@@ -22,7 +22,7 @@ const ProjectContextProvider = (props) => {
   const [recommendedProjects, setRecommendedProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const socket = useRef(null); // ✅ socket managed via ref
+  const socket = useRef(null); // socket managed via ref
 
   const navigate = useNavigate();
 

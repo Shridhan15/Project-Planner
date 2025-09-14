@@ -23,6 +23,7 @@ const Profile = () => {
   console.log(localStorage.getItem("token")); // user token
   console.log(localStorage.getItem("adminToken")); // admin token
   console.log(localStorage); // full localStorage object
+  console.log("User Profile in Profile.jsx:", userProfile);
 
   //  Only fetch projects once on mount
   useEffect(() => {

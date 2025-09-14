@@ -8,6 +8,7 @@ import userRouter from './routes/userRoutes.js';
 import projectRouter from './routes/projectRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
 import notificationRouter from './routes/notificationRoutes.js';
+import messageRouter from './routes/messageRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -38,11 +39,11 @@ const io = new Server(server, {
 const userSocketMap = new Map();
 
 io.on("connection", (socket) => {
-    console.log("✅ Socket connected:", socket.id);
+    console.log("Socket connected:", socket.id);
 
     socket.on("register", (userId) => {
         userSocketMap.set(userId, socket.id);
-        console.log(`📌 Registered socket for user ${userId}`);
+        console.log(`Registered socket for user ${userId}`);
     });
 
     socket.on("disconnect", () => {
@@ -52,13 +53,13 @@ io.on("connection", (socket) => {
                 break;
             }
         }
-        console.log("❌ Socket disconnected:", socket.id);
+        console.log("Socket disconnected:", socket.id);
     });
 });
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(` Server running on port ${PORT}`);
 });
 
 app.get('/', (req, res) => {
@@ -69,5 +70,6 @@ app.use('/api/user', userRouter);
 app.use('/api/project', projectRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/notifications', notificationRouter);
+app.use('/api/messages', messageRouter);
 
 export { io, userSocketMap };
