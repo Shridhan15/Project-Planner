@@ -15,6 +15,77 @@ function MessagePage() {
   const location = useLocation();
   const { authorId: openChatUserId, authorName } = location.state || {};
 
+  useEffect(() => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!token || !userProfile?._id) return;
+
+    const eventSource = new EventSource(
+      `${backendUrl}/api/messages/sse?token=${token}`
+    );
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "connected") return; // skip initial msg
+
+        // Update messages if chat is open
+        if (
+          selectedChat &&
+          (data.from_user_id._id === getOtherUser(selectedChat)._id ||
+            data.to_user_id._id === getOtherUser(selectedChat)._id)
+        ) {
+          setMessages((prev) => [...prev, data]);
+        }
+
+        // Update recent chats
+        const otherUser =
+          data.from_user_id._id === userProfile._id
+            ? data.to_user_id
+            : data.from_user_id;
+
+        const chatId = getChatId(userProfile, otherUser);
+        setChats((prev) => {
+          const filtered = prev.filter(
+            (chat) => getChatId(chat.from_user_id, chat.to_user_id) !== chatId
+          );
+          return [
+            {
+              _id: chatId,
+              from_user_id: userProfile,
+              to_user_id: otherUser,
+              lastMessage: data.text,
+            },
+            ...filtered,
+          ];
+        });
+
+        // Browser notification if I'm the receiver
+        if (
+          Notification.permission === "granted" &&
+          data.to_user_id._id === userProfile._id
+        ) {
+          new Notification(`${data.from_user_id.name}`, { body: data.text });
+        }
+      } catch (err) {
+        console.error("SSE parse error", err);
+      }
+    };
+
+    eventSource.onerror = (err) => {
+      console.error("SSE error:", err);
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, [backendUrl, token, userProfile, selectedChat]);
+
   // Utility to get the "other user" in a chat
   const getOtherUser = (chat) => {
     if (!chat || !chat.from_user_id || !chat.to_user_id) {
@@ -123,6 +194,7 @@ function MessagePage() {
       if (data.success) {
         const chatId = getChatId(userProfile, otherUser);
 
+        // ✅ Only update chat list (recent chats)
         setChats((prev) => {
           const filtered = prev.filter(
             (chat) => getChatId(chat.from_user_id, chat.to_user_id) !== chatId
@@ -138,7 +210,9 @@ function MessagePage() {
           ];
         });
 
-        setMessages((prev) => [...prev, data.message]);
+        // ❌ Remove this line (SSE already updates messages)
+        // setMessages((prev) => [...prev, data.message]);
+
         setNewMessage("");
       }
     } catch (err) {
