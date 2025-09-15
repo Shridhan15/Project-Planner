@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
   technologiesKnown: [{ type: String }],
 
   profileImage: {
-    type: String, // URL (e.g., Cloudinary)
+    type: String, // URL  
   },
 }, { timestamps: true });
 

@@ -44,7 +44,6 @@ const AuthorProfile = () => {
     getAuthorProfile();
   }, [authorId]);
 
-  
   const handleSendMessage = () => {
     navigate("/messages", {
       state: { authorId: authorProfile._id, authorName: authorProfile.name },
@@ -85,16 +84,15 @@ const AuthorProfile = () => {
                 </span>{" "}
                 {authorProfile.technologiesKnown.join(", ")}
               </p>
-
-              {/* Send Message Button */}
-              <div className="mt-4">
-                <button
-                  onClick={handleSendMessage}
-                  className="cursor-pointer px-6 py-2 rounded-lg bg-violet-500 text-white font-semibold shadow-md hover:bg-violet-600 transition duration-200"
-                >
-                  Send Message
-                </button>
-              </div>
+            </div>
+            {/* Send Message Button */}
+            <div className="mt-4">
+              <button
+                onClick={handleSendMessage}
+                className="cursor-pointer px-6 py-2 rounded-lg bg-violet-500 text-white font-semibold shadow-md hover:bg-violet-600 transition duration-200"
+              >
+                Send Message
+              </button>
             </div>
           </div>
 

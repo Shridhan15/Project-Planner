@@ -3,13 +3,16 @@ import { useLocation } from "react-router-dom";
 import { ProjectContext } from "../../context/ProjectContext";
 import axios from "axios";
 import { assets } from "../assets/assets";
+import MessageNotification from "../components/MessageNotification";
 
 function MessagePage() {
-  const { userProfile, token, backendUrl } = useContext(ProjectContext);
+  const { userProfile, token, backendUrl, pushMessageNotification } =
+    useContext(ProjectContext);
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+
   const scrollRef = useRef();
 
   const location = useLocation();
@@ -65,11 +68,12 @@ function MessagePage() {
         });
 
         // Browser notification if I'm the receiver
-        if (
-          Notification.permission === "granted" &&
-          data.to_user_id._id === userProfile._id
-        ) {
-          new Notification(`${data.from_user_id.name}`, { body: data.text });
+        if (data.to_user_id._id === userProfile._id) {
+          pushMessageNotification(data.from_user_id, data.text);
+
+          if (Notification.permission === "granted") {
+            new Notification(`${data.from_user_id.name}`, { body: data.text });
+          }
         }
       } catch (err) {
         console.error("SSE parse error", err);
@@ -194,7 +198,7 @@ function MessagePage() {
       if (data.success) {
         const chatId = getChatId(userProfile, otherUser);
 
-        // ✅ Only update chat list (recent chats)
+        // Only update chat list (recent chats)
         setChats((prev) => {
           const filtered = prev.filter(
             (chat) => getChatId(chat.from_user_id, chat.to_user_id) !== chatId
@@ -210,9 +214,6 @@ function MessagePage() {
           ];
         });
 
-        // ❌ Remove this line (SSE already updates messages)
-        // setMessages((prev) => [...prev, data.message]);
-
         setNewMessage("");
       }
     } catch (err) {
@@ -220,18 +221,18 @@ function MessagePage() {
     }
   };
 
+  useEffect(() => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+  }, []);
+
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-50 ">
-      {/* 64px = Navbar height */}
-
-      {/* Left panel: chat list */}
       <div className="w-1/3 bg-white shadow-md border-r border-gray-200 flex flex-col">
-        {/* Sticky header */}
         <div className="p-4 border-b border-gray-200 bg-gray-50 font-bold   sticky top-[75px] z-10">
           Messages
         </div>
-
-        {/* Scrollable chat list */}
         <div className="flex-1  overflow-y-auto mt-20">
           {chats.map((chat) => {
             const otherUser = getOtherUser(chat);
@@ -288,7 +289,6 @@ function MessagePage() {
       <div className="flex-1 flex flex-col bg-white shadow-md">
         {selectedChat ? (
           <>
-            {/* Sticky chat header */}
             <div className="p-4 flex gap-3 border-b border-gray-200 bg-gray-50 font-semibold sticky top-[75px] z-10">
               <img
                 src={
@@ -300,7 +300,6 @@ function MessagePage() {
               {getOtherUser(selectedChat).name}
             </div>
 
-            {/* Scrollable messages */}
             <div className="flex-1 p-4 overflow-y-auto bg-gray-100">
               {messages.map((msg) => (
                 <div
@@ -325,7 +324,7 @@ function MessagePage() {
               ))}
             </div>
 
-            {/* Input bar stays at bottom */}
+            {/* Input bar  */}
             <div className="p-4 bg-gray-50 border-t border-gray-200 flex">
               <input
                 type="text"

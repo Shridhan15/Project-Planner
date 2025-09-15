@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
 import { toast } from "react-toastify";
+import MessageNotification from "../src/components/MessageNotification";
 
 export const ProjectContext = createContext();
 
@@ -21,6 +22,7 @@ const ProjectContextProvider = (props) => {
   const [requestStatusByProject, setRequestStatusByProject] = useState({});
   const [recommendedProjects, setRecommendedProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [messageNotifications, setMessageNotifications] = useState([]);
 
   const socket = useRef(null); // socket managed via ref
 
@@ -141,7 +143,7 @@ const ProjectContextProvider = (props) => {
 
     return () => {
       if (socket.current) {
-        socket.current.disconnect(); // ✅ Cleanup on unmount
+        socket.current.disconnect(); // Cleanup on unmount
       }
     };
   }, [token]);
@@ -186,6 +188,64 @@ const ProjectContextProvider = (props) => {
     }
   }, [projectsData, userProfile]);
 
+  // ProjectContextProvider.js
+
+  // Generate a unique chat ID for two users
+  const getChatId = (userA, userB) => {
+    if (!userA?._id || !userB?._id) return "";
+    return [userA._id, userB._id].sort().join("_");
+  };
+
+  // Get the "other user" from a chat object
+  const getOtherUser = (chat) => {
+    if (!chat || !userProfile) return { _id: "", name: "Unknown" };
+    return chat.from_user_id._id === userProfile._id
+      ? chat.to_user_id
+      : chat.from_user_id;
+  };
+
+  // inside ProjectContextProvider.js
+  useEffect(() => {
+    if (!token || !userProfile?._id) return;
+
+    const eventSource = new EventSource(
+      `${backendUrl}/api/messages/sse?token=${token}`
+    );
+
+    eventSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "connected") return;
+
+        if (data.to_user_id._id === userProfile._id) {
+          pushMessageNotification(data.from_user_id, data.text);
+
+          if (Notification.permission === "granted") {
+            new Notification(`${data.from_user_id.name}`, { body: data.text });
+          }
+        }
+      } catch (err) {
+        console.error("SSE parse error", err);
+      }
+    };
+
+    eventSource.onerror = (err) => {
+      console.error("SSE error:", err);
+      eventSource.close();
+    };
+
+    return () => eventSource.close();
+  }, [backendUrl, token, userProfile]);
+
+  const pushMessageNotification = (sender, message) => {
+    const id = Date.now();
+    setMessageNotifications((prev) => [...prev, { id, sender, message }]);
+  };
+
+  const removeMessageNotification = (id) => {
+    setMessageNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
   const value = {
     backendUrl,
     token,
@@ -213,11 +273,24 @@ const ProjectContextProvider = (props) => {
     recommendedProjects,
     searchTerm,
     setSearchTerm,
+    pushMessageNotification,
+    messageNotifications,
+    setMessageNotifications,
+    removeMessageNotification,
   };
 
   return (
     <ProjectContext.Provider value={value}>
       {props.children}
+      <div className="fixed top-20 right-4 z-50 space-y-2">
+        {messageNotifications.map((n) => (
+          <MessageNotification
+            key={n.id}
+            notification={n}
+            onClose={removeMessageNotification}
+          />
+        ))}
+      </div>
     </ProjectContext.Provider>
   );
 };

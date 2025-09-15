@@ -11,7 +11,7 @@ const SupportBox = () => {
     phone: "",
     message: "",
   });
-  const {backendUrl}=useContext(ProjectContext)
+  const { backendUrl } = useContext(ProjectContext);
 
   const toggleBox = () => {
     setIsOpen(!isOpen);
@@ -90,7 +90,7 @@ const SupportBox = () => {
             />
             <button
               type="submit"
-              className="w-full cursor-pointer bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+              className="w-full cursor-pointer bg-violet-500 text-white p-2 rounded hover:bg-violet-600"
             >
               Submit
             </button>
@@ -99,7 +99,7 @@ const SupportBox = () => {
       ) : (
         <button
           onClick={toggleBox}
-          className="bg-blue-600 cursor-pointer text-white rounded-full p-4 shadow-xl hover:bg-blue-700"
+          className="bg-violet-500 cursor-pointer text-white rounded-full p-4 shadow-xl hover:bg-violet-600"
         >
           💬
         </button>
