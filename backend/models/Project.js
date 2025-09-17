@@ -15,7 +15,7 @@ const projectSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["open", "closed"],
-    default: "open", // Project is open by default
+    default: "open",  
   },
 }, { timestamps: true });
 

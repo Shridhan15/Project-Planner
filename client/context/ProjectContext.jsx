@@ -171,6 +171,7 @@ const ProjectContextProvider = (props) => {
 
       const recommended = projectsData
         .filter((project) => project.author._id !== userProfile._id)
+        .filter((project) => project.status?.trim().toLowerCase() === "open")
         .filter((project) => {
           const projectSkills = normalizeArray(project.skillsRequired || []);
           const projectTechs = normalizeArray(project.techStack || []);
@@ -184,27 +185,11 @@ const ProjectContextProvider = (props) => {
           );
         });
       console.log("✅ Recommended Projects:", recommended);
+
       setRecommendedProjects(recommended);
     }
   }, [projectsData, userProfile]);
 
-  // ProjectContextProvider.js
-
-  // Generate a unique chat ID for two users
-  const getChatId = (userA, userB) => {
-    if (!userA?._id || !userB?._id) return "";
-    return [userA._id, userB._id].sort().join("_");
-  };
-
-  // Get the "other user" from a chat object
-  const getOtherUser = (chat) => {
-    if (!chat || !userProfile) return { _id: "", name: "Unknown" };
-    return chat.from_user_id._id === userProfile._id
-      ? chat.to_user_id
-      : chat.from_user_id;
-  };
-
-  // inside ProjectContextProvider.js
   useEffect(() => {
     if (!token || !userProfile?._id) return;
 

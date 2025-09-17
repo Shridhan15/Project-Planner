@@ -86,7 +86,7 @@ const Navbar = () => {
             <div className="mr-2">
               <Link to="/messages" className="relative">
                 <MessageCircle className="h-7 w-7 text-gray-600 hover:text-violet-500 cursor-pointer" />
-                {/* Badge for unread messages */}
+ 
                  
               </Link>
             </div>

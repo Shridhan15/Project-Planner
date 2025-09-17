@@ -63,7 +63,7 @@ const AuthorProfile = () => {
             <img
               src={authorProfile.profileImage || assets.profile_icon}
               alt={authorProfile.name}
-              className="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
+               className="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
             />
 
             {/* Profile Info */}

@@ -157,7 +157,7 @@ const closeProject = async (req, res) => {
 
 const acceptJoinRequest = async (req, res) => {
     try {
-        const { requestId } = req.params; // ✅ join request ID from frontend
+        const { requestId } = req.params; // join request ID from frontend
         const request = await JoinRequest.findByIdAndUpdate(
             requestId,
             { status: 'Accepted' },

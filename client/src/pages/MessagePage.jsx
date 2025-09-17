@@ -90,7 +90,7 @@ function MessagePage() {
     };
   }, [backendUrl, token, userProfile, selectedChat]);
 
-  // Utility to get the "other user" in a chat
+  //get the other user in a chat
   const getOtherUser = (chat) => {
     if (!chat || !chat.from_user_id || !chat.to_user_id) {
       return { _id: "", name: "Unknown" };
@@ -143,6 +143,10 @@ function MessagePage() {
     };
     fetchChats();
   }, [token, backendUrl, openChatUserId, userProfile]);
+
+  useEffect(() => {
+    console.log("All messages (updated):", chats);
+  }, [chats]);
 
   // Fetch messages for selected chat
   useEffect(() => {

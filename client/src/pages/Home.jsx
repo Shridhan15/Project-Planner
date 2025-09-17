@@ -12,7 +12,7 @@ const Home = () => {
     isAuthenticated,
     recommendedProjects,
     searchTerm,
-    userProfile
+    userProfile,
   } = useContext(ProjectContext);
 
   useEffect(() => {
@@ -49,15 +49,12 @@ const Home = () => {
       </section>
 
       {/* ---------- Recommended Projects ---------- */}
-      {!searchTerm &&  userProfile && userProfile?.skills!="" && (
+      {!searchTerm && userProfile && userProfile?.skills != "" && (
         <section className="bg-white py-12 px-4 shadow-inner border-t border-gray-200">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-bold text-blue-800 mb-2 text-center">
               Recommended Projects
             </h2>
-            <p className="text-gray-600 text-center mb-8">
-              Handpicked based on your skills & interests
-            </p>
 
             {recommendedProjects.length > 0 ? (
               <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
