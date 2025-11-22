@@ -14,6 +14,7 @@ const ProjectCard = ({ project }) => {
     fetchUserProfile,
     requestStatusByProject,
     setRequestStatusByProject,
+    getAllProjects,
   } = useContext(ProjectContext);
   const [isClosed, setIsClosed] = useState(false);
   // fetchUserProfile(); // Ensure user profile is fetched before rendering
@@ -54,36 +55,41 @@ const ProjectCard = ({ project }) => {
 
   const handleCloseProject = async (projectId) => {
     try {
+      console.log("Closing project...", projectId);
+
       const response = await axios.put(
         `${backendUrl}/api/project/close-project/${projectId}`,
-        {},
+        { action: "close" },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
+
+      console.log("Response received:", response.data);
+
       if (response.data.success) {
-        toast.success("Project closed successfully");
+        toast.success("Project closed successfully"); 
+        await getAllProjects();
         fetchUserProfile();
       }
     } catch (error) {
-      console.error("Error closing project:", error);
+      console.error("Error closing project:", error.response?.data || error);
+      toast.error("Failed to close project");
     }
   };
+
   console.log("Project ID:", project._id);
   console.log("requestStatusByProject:", requestStatusByProject);
   const status = requestStatusByProject?.[project._id];
 
   return (
     <form
-      className={`bg-white rounded-xl shadow-md p-4 hover:shadow-xl hover:scale-105 transition duration-300 ${
+      className={`bg-white rounded-xl shadow-md p-4   hover:scale-105 transition duration-300 ${
         project.status === "closed"
           ? "backdrop-blur-sm opacity-50 pointer-events-none"
           : ""
       }`}
     >
-      
       <img
         className="w-full h-48 object-contain rounded-md mb-4"
         src={project.image || assets.default_image}
@@ -155,6 +161,7 @@ const ProjectCard = ({ project }) => {
         project.author._id === userProfile._id &&
         project.status === "open" && (
           <button
+            type="button"
             className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition cursor-pointer ml-2"
             onClick={() => handleCloseProject(project._id)}
           >

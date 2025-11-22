@@ -6,42 +6,39 @@ import { sendMail } from "../config/sendMail.js";
 import Notification from "../models/Notification.js";
 import { io, userSocketMap } from "../server.js";
 import JoinRequest from "../models/joinRequest.js";
+import Groq from "groq-sdk";
 
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 const addProject = async (req, res) => {
     try {
         const { title, description, techStack, skillsRequired } = req.body;
-        const image = req.file;
 
         let imageUrl = "";
         let imagePublicId = "";
-
-        if (image) {
-            const result = await cloudinary.uploader.upload(image.path, {
-                resource_type: "image",
-            });
-            imageUrl = result.secure_url;
-            imagePublicId = result.public_id; // Store the public ID for future reference(while deleting the image)
+ 
+        if (req.file) {
+            imageUrl = req.file.path;         
+            imagePublicId = req.file.filename;  
         }
 
         const newProject = new Project({
             title,
             description,
-            techStack: techStack.split(",").map(skill => skill.trim()),
-            skillsRequired: skillsRequired.split(",").map(skill => skill.trim()),
+            techStack: techStack ? techStack.split(",").map(s => s.trim()) : [],
+            skillsRequired: skillsRequired ? skillsRequired.split(",").map(s => s.trim()) : [],
             image: imageUrl,
+            imagePublicId,
             author: req.user._id,
-            imagePublicId: imagePublicId,
             status: "open",
         });
 
         await newProject.save();
 
-        console.log("Project added successfully:", newProject);
         res.json({ success: true, message: "Project added successfully", project: newProject });
 
     } catch (error) {
-        console.error("Error adding project(in controller):", error);
+        console.error("Error adding project:", error);
         res.json({ success: false, message: "Internal server error" });
     }
 };
@@ -157,7 +154,7 @@ const closeProject = async (req, res) => {
 
 const acceptJoinRequest = async (req, res) => {
     try {
-        const { requestId } = req.params; // join request ID from frontend
+        const { requestId } = req.params;
         const request = await JoinRequest.findByIdAndUpdate(
             requestId,
             { status: 'Accepted' },
@@ -194,7 +191,7 @@ const rejectJoinRequest = async (req, res) => {
 
     try {
 
-        const { requestId } = req.params; //   join request ID from frontend
+        const { requestId } = req.params;
         const request = await JoinRequest.findByIdAndUpdate(
             requestId,
             { status: 'Rejected' },
@@ -230,6 +227,49 @@ const rejectJoinRequest = async (req, res) => {
 }
 
 
+const enhanceDescription = async (req, res) => {
+    try {
+        const { text } = req.body;
+
+        if (!text || text.trim().length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Description text is required.",
+            });
+        }
+
+        const completion = await groq.chat.completions.create({
+            model: "llama-3.3-70b-versatile",
+            messages: [
+                {
+                    role: "user",
+                    content: `Rewrite the following project description in a clearer, more professional, and grammatically correct way.
+Output ONLY the improved description. 
+Do NOT add explanations, bullet points, or any extra text.
+
+Text:
+"${text}"`
+                }
+            ]
+        });
+
+        const improvedText = completion.choices[0].message.content.trim();
+
+        return res.json({
+            success: true,
+            enhancedText: improvedText,
+        });
+
+    } catch (error) {
+        console.error("Groq Enhance Error:", error);
+        res.status(500).json({
+            success: false,
+            message: "AI enhancement failed.",
+        });
+    }
+};
 
 
-export { addProject, getProjects, sendJoinRequest, closeProject, acceptJoinRequest, rejectJoinRequest };
+
+
+export { addProject, getProjects, sendJoinRequest, closeProject, acceptJoinRequest, rejectJoinRequest, enhanceDescription };

@@ -8,10 +8,39 @@ const PostProject = () => {
   const [desc, setDesc] = useState("");
   const [skillsRequired, setSkillsRequired] = useState("");
   const [techStack, setTechStack] = useState("");
-
   const [image, setImage] = useState(false);
+  const [enhancing, setEnhancing] = useState(false);
 
   const { backendUrl, token, navigate } = useContext(ProjectContext);
+
+  const enhanceDescription = async () => {
+    if (!desc.trim()) {
+      toast.error("Please enter the description first!");
+      return;
+    }
+
+    try {
+      setEnhancing(true);
+
+      const { data } = await axios.post(
+        backendUrl + "/api/project/enhance-desc",
+        { text: desc },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (data.enhancedText) {
+        setDesc(data.enhancedText);
+        toast.success("Description enhanced ✨");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to enhance. Try again.");
+    } finally {
+      setEnhancing(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,33 +51,23 @@ const PostProject = () => {
       formData.append("skillsRequired", skillsRequired);
       formData.append("techStack", techStack);
 
-      if (image) {
-        formData.append("image", image);
-      } else {
-        formData.append("image", ""); // Handle case where no image is uploaded
-      }
+      if (image) formData.append("image", image);
 
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ": " + pair[1]);
-      }
       const response = await axios.post(
         backendUrl + "/api/project/add",
         formData,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      console.log("response", response.data);
       if (response.data.success) {
         toast.success("Project submitted successfully!");
         setTitle("");
         setDesc("");
         setSkillsRequired("");
         setTechStack("");
-        setImage(null); // Reset image state
+        setImage(null);
         navigate("/");
       } else {
         toast.error(response.data.message || "Failed to submit project.");
@@ -62,60 +81,95 @@ const PostProject = () => {
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-25">
       <h2 className="text-2xl font-bold mb-4 text-center">
-        {" "}
         Post a New Project
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="title"
-          placeholder="Project Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="w-full border px-4 py-2 rounded"
-        />
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 bg-white/80 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-gray-200"
+      >
+        {/* Title */}
+        <div className="flex flex-col gap-1">
+          <label className="text-gray-700 font-medium">Project Title</label>
+          <input
+            type="text"
+            name="title"
+            placeholder="Enter a clear & short title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+            className="w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
 
-        <textarea
-          name="description"
-          placeholder="Project Description"
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
-          required
-          className="w-full border px-4 py-2 rounded"
-        />
+        {/* Description + Enhance Button */}
+        <div className="flex flex-col gap-1 relative">
+          <label className="text-gray-700 font-medium">
+            Project Description
+          </label>
 
-        <input
-          type="text"
-          name="skillsRequired"
-          placeholder="Required Skills (comma separated)"
-          value={skillsRequired}
-          onChange={(e) => setSkillsRequired(e.target.value)}
-          className="w-full border px-4 py-2 rounded"
-        />
+          <textarea
+            name="description"
+            placeholder="Describe your project goals, features, and expectations..."
+            value={desc}
+            onChange={(e) => setDesc(e.target.value)}
+            required
+            className="w-full h-40 border px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none pr-32 resize-none"
+          />
 
-        <input
-          type="text"
-          name="techStack"
-          placeholder="Tech Stack (comma separated)"
-          value={techStack}
-          onChange={(e) => setTechStack(e.target.value)}
-          className="w-full border px-4 py-2 rounded"
-        />
+          {/* AI Enhance Button */}
+          <button
+            type="button"
+            onClick={enhanceDescription}
+            className="absolute cursor-pointer right-3 top-[52px] bg-purple-600 text-white px-4 py-1.5 rounded-full text-sm shadow hover:bg-purple-700 hover:scale-105 transition-all"
+          >
+            {enhancing ? "Enhancing..." : "✨ Enhance"}
+          </button>
+        </div>
 
-        <input
-          type="file"
-          name="image"
-          accept="image/*"
-          onChange={(e) => setImage(e.target.files[0])}
-          className="w-full border px-4 py-2 rounded"
-        />
+        {/* Skills Required */}
+        <div className="flex flex-col gap-1">
+          <label className="text-gray-700 font-medium">Required Skills</label>
+          <input
+            type="text"
+            name="skillsRequired"
+            placeholder="e.g. React, Node.js, MongoDB"
+            value={skillsRequired}
+            onChange={(e) => setSkillsRequired(e.target.value)}
+            className="w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
 
+        {/* Tech Stack */}
+        <div className="flex flex-col gap-1">
+          <label className="text-gray-700 font-medium">Tech Stack</label>
+          <input
+            type="text"
+            name="techStack"
+            placeholder="e.g. MERN, Django, Flutter"
+            value={techStack}
+            onChange={(e) => setTechStack(e.target.value)}
+            className="w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        {/* Image Upload */}
+        <div className="flex flex-col gap-1">
+          <label className="text-gray-700 font-medium">Project Image</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0])}
+            className="w-full border px-3 py-2 rounded-lg bg-gray-50 cursor-pointer focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+        </div>
+
+        {/* Submit Button */}
         <button
           type="submit"
-          className="w-full cursor-pointer bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+          className="w-full cursor-pointer bg-blue-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:bg-blue-700 hover:scale-[1.02] transition-all"
         >
-          Submit Project
+          🚀 Submit Project
         </button>
       </form>
     </div>

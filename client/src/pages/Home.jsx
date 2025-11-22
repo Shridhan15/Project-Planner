@@ -19,15 +19,27 @@ const Home = () => {
     getAllProjects();
   }, []);
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    if (isAuthenticated) {
-      navigate("/postproject");
-    } else {
-      toast.info("Please create account or login to post a project");
-      navigate("/login");
-    }
-  };
+  // const handleClick = (e) => {
+  //   e.preventDefault();
+  //   if (isAuthenticated) {
+  //     navigate("/postproject");
+  //   } else {
+  //     toast.info("Please create account or login to post a project");
+  //     navigate("/login");
+  //   }
+  // };
+
+  const handleClick = () => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    navigate("/postproject");
+  } else {
+    toast.info("Please create account or login to post a project");
+    navigate("/login");
+  }
+};
+
 
   return (
     <div className="bg-gray-50 mt-19 min-h-screen ">
@@ -61,7 +73,7 @@ const Home = () => {
                 {recommendedProjects.map((project) => (
                   <div
                     key={project._id}
-                    className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                    className="  hover:-translate-y-1 transition-all duration-300"
                   >
                     <ProjectCard project={project} />
                   </div>
@@ -95,7 +107,7 @@ const Home = () => {
                 .map((project) => (
                   <div
                     key={project._id}
-                    className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                    className="  hover:-translate-y-1 transition-all duration-300"
                   >
                     <ProjectCard project={project} />
                   </div>
