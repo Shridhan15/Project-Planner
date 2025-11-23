@@ -19,6 +19,12 @@ const PostProject = () => {
       return;
     }
 
+    // 🔥 Minimum 40 characters check
+    if (desc.trim().length < 40) {
+      toast.error("Description should be at least 40 characters long!");
+      return;
+    }
+
     try {
       setEnhancing(true);
 

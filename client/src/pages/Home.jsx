@@ -19,52 +19,66 @@ const Home = () => {
     getAllProjects();
   }, []);
 
-  // const handleClick = (e) => {
-  //   e.preventDefault();
-  //   if (isAuthenticated) {
-  //     navigate("/postproject");
-  //   } else {
-  //     toast.info("Please create account or login to post a project");
-  //     navigate("/login");
-  //   }
-  // };
-
   const handleClick = () => {
-  const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
-  if (token) {
-    navigate("/postproject");
-  } else {
-    toast.info("Please create account or login to post a project");
-    navigate("/login");
-  }
-};
-
+    if (token) {
+      navigate("/postproject");
+    } else {
+      toast.info("Please create account or login to post a project");
+      navigate("/login");
+    }
+  };
 
   return (
-    <div className="bg-gray-50 mt-19 min-h-screen ">
+    <div className="min-h-screen pt-20 bg-gradient-to-br from-slate-900 via-gray-900 to-black text-gray-100 antialiased">
+      {/* decorative gradient blobs */}
+      <div className="pointer-events-none fixed -z-10 inset-0 overflow-hidden">
+        <div className="absolute -left-32 top-10 w-96 h-96 rounded-full bg-gradient-to-tr from-violet-700/30 via-indigo-600/20 to-transparent blur-3xl animate-blob"></div>
+        <div className="absolute right-[-120px] bottom-10 w-80 h-80 rounded-full bg-gradient-to-tr from-rose-600/20 via-pink-500/10 to-transparent blur-2xl animate-blob animation-delay-2000"></div>
+      </div>
+
       {/* ---------- Hero Section ---------- */}
-      <section className="text-center py-16 bg-gradient-to-r from-blue-100 to-blue-200 px-4 shadow-md">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-blue-800 mb-4">
-          Explore Live Projects
+      <section
+        className="relative text-center py-20 px-6 mx-auto max-w-7xl
+      bg-gradient-to-br from-transparent via-white/2 to-transparent
+      rounded-2xl border border-white/5 shadow-2xl backdrop-blur-lg"
+      >
+        <h1 className="text-4xl md:text-6xl font-extrabold mb-4 tracking-tight">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-300 via-white to-blue-200">
+            Explore Live Projects
+          </span>
         </h1>
-        <p className="text-gray-700 text-lg md:text-xl max-w-2xl mx-auto">
-          Find and join real student-led tech projects!
+
+        <p className="text-gray-300 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed">
+          Find and join real student-led tech projects. Collaborate, learn and
+          build something meaningful — together.
         </p>
 
-        <button
-          onClick={handleClick}
-          className="mt-6 cursor-pointer bg-blue-600 text-white font-semibold px-8 py-3 rounded-xl shadow hover:bg-blue-700 hover:scale-105 transform transition-all duration-300"
-        >
-          🚀 List Your Project
-        </button>
+        <div className="mt-8 flex items-center justify-center gap-4">
+          <button
+            onClick={handleClick}
+            className=" cursor-pointer inline-flex items-center gap-3 px-6 py-3 rounded-full
+             bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold
+             shadow-lg hover:scale-105 transform transition"
+          >
+            🚀 List Your Project
+          </button>
+
+          <button
+            onClick={() => navigate("/projects")}
+            className="px-4 py-2 rounded-full border border-white/10 text-sm text-gray-300 hover:bg-white/5 transition"
+          >
+            Browse Projects
+          </button>
+        </div>
       </section>
 
       {/* ---------- Recommended Projects ---------- */}
       {!searchTerm && userProfile && userProfile?.skills != "" && (
-        <section className="bg-white py-12 px-4 shadow-inner border-t border-gray-200">
+        <section className="py-12 px-4 mt-10">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold text-blue-800 mb-2 text-center">
+            <h2 className="text-3xl font-bold text-white mb-8 text-center">
               Recommended Projects
             </h2>
 
@@ -73,14 +87,16 @@ const Home = () => {
                 {recommendedProjects.map((project) => (
                   <div
                     key={project._id}
-                    className="  hover:-translate-y-1 transition-all duration-300"
+                    className="transform hover:-translate-y-3 hover:scale-105 transition-all duration-300"
                   >
-                    <ProjectCard project={project} />
+                    <div className="rounded-xl border border-white/8 shadow-xl overflow-hidden bg-gradient-to-br from-[#0b1020]/60 to-[#071029]/40">
+                      <ProjectCard project={project} />
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center text-gray-500 py-8">
+              <div className="text-center text-gray-400 py-12">
                 <p className="text-lg">
                   No recommendations available right now.
                 </p>
@@ -94,11 +110,14 @@ const Home = () => {
       )}
 
       {/* ---------- All Projects ---------- */}
-      <section className="bg-gray-50 py-14 px-4 border-t border-gray-300">
+      <section className="py-14 px-4">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-blue-800 mb-6 border-b-4 border-blue-600 inline-block pb-1">
-            All Projects
-          </h2>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold text-white border-b-4 border-indigo-500 w-fit pb-1">
+              All Projects
+            </h2>
+            <div className="text-sm text-gray-400">Showing results</div>
+          </div>
 
           {filteredProjects.length > 0 ? (
             <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -107,14 +126,14 @@ const Home = () => {
                 .map((project) => (
                   <div
                     key={project._id}
-                    className="  hover:-translate-y-1 transition-all duration-300"
+                    className="rounded-xl overflow-hidden border border-white/8 bg-gradient-to-br from-[#071026]/60 to-[#0b1023]/40 shadow-2xl transform hover:-translate-y-2 hover:scale-102 transition"
                   >
                     <ProjectCard project={project} />
                   </div>
                 ))}
             </div>
           ) : projectsData.length > 0 ? (
-            <div className="text-center text-gray-600 text-lg mt-10">
+            <div className="text-center text-gray-400 text-lg mt-10">
               No matching projects found.
             </div>
           ) : (
@@ -122,12 +141,12 @@ const Home = () => {
               {[...Array(6)].map((_, index) => (
                 <div
                   key={index}
-                  className="animate-pulse bg-white p-6 rounded-xl shadow-md flex flex-col gap-4"
+                  className="animate-pulse p-6 rounded-xl shadow-xl border border-white/8 bg-gradient-to-br from-[#0b101a]/60 to-[#071026]/40"
                 >
-                  <div className="h-6 bg-gray-300 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-300 rounded w-full"></div>
-                  <div className="h-4 bg-gray-300 rounded w-5/6"></div>
-                  <div className="mt-4 h-10 bg-gray-300 rounded w-1/2"></div>
+                  <div className="h-6 bg-gray-800/40 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-800/40 rounded w-full mt-4"></div>
+                  <div className="h-4 bg-gray-800/40 rounded w-5/6 mt-3"></div>
+                  <div className="mt-6 h-10 bg-gray-800/40 rounded w-1/2"></div>
                 </div>
               ))}
             </div>

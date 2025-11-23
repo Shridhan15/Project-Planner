@@ -234,7 +234,7 @@ function MessagePage() {
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-50 ">
       <div className="w-1/3 bg-white shadow-md border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200 bg-gray-50 font-bold   sticky top-[75px] z-10">
+        <div className="p-4 border-b border-gray-200 bg-gray-50 font-bold   sticky top-[70px] z-10">
           Messages
         </div>
         <div className="flex-1  overflow-y-auto mt-20">
@@ -293,7 +293,7 @@ function MessagePage() {
       <div className="flex-1 flex flex-col bg-white shadow-md">
         {selectedChat ? (
           <>
-            <div className="p-4 flex gap-3 border-b border-gray-200 bg-gray-50 font-semibold sticky top-[75px] z-10">
+            <div className="p-4 flex gap-3 border-b border-gray-200 bg-gray-50 font-semibold sticky top-[65px] z-10">
               <img
                 src={
                   getOtherUser(selectedChat).profileImage || assets.profile_icon

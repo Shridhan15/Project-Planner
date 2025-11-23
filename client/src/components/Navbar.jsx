@@ -19,6 +19,7 @@ const Navbar = () => {
   } = useContext(ProjectContext);
 
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const logout = () => {
     setUserProfile(null);
@@ -37,10 +38,10 @@ const Navbar = () => {
     }
 
     const filtered = projectsData.filter((project) => {
-      const skillsMatch = project.skillsRequired.some((skill) =>
+      const skillsMatch = project.skillsRequired?.some((skill) =>
         skill.toLowerCase().includes(keyword)
       );
-      const techMatch = project.techStack.some((tech) =>
+      const techMatch = project.techStack?.some((tech) =>
         tech.toLowerCase().includes(keyword)
       );
       return skillsMatch || techMatch;
@@ -50,17 +51,17 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white z-100 shadow-md w-full fixed top-0 left-0 ">
-      <div className="flex justify-between items-center p-2">
+    <nav className="fixed top-0 left-0 right-0 z-50 h-16 backdrop-blur-sm bg-gradient-to-r from-slate-900/80 via-violet-900/80 to-black/70 border-b border-black/20">
+      <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-4 md:px-6">
         {/* Left: Logo */}
-        <div>
-          <Link to="/" className="flex items-center gap-2 ml-2">
+        <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-2">
             <img
-              className="h-15 w-15 rounded-full"
+              className="h-10 w-10 rounded-full object-cover"
               src={assets.logo}
               alt="logo"
             />
-            <span className="font-bold hidden md:inline text-2xl text-violet-500">
+            <span className="font-bold text-xl text-white select-none">
               ProjectPartner
             </span>
           </Link>
@@ -68,51 +69,73 @@ const Navbar = () => {
 
         {/* Middle: Search input  */}
         {location.pathname === "/" && (
-          <div className="hidden md:block md:ml-6 w-full max-w-xs">
+          <div className="hidden md:block md:ml-6 w-full max-w-lg">
             <input
               type="text"
               placeholder="Search by skill or tech stack..."
               value={searchTerm}
               onChange={handleSearch}
-              className="w-full px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 rounded-full bg-slate-800 text-gray-100 placeholder-gray-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
             />
           </div>
         )}
 
         {/*  Notification + Profile */}
-        <div className="flex items-center gap-4 mr-4">
-          {token && <NotificationBell token={token} />}
+        <div className="flex items-center gap-4 ml-4">
+          {token && <NotificationBell className="" token={token} />}
           {token && token !== "" && (
             <div className="mr-2">
               <Link to="/messages" className="relative">
-                <MessageCircle className="h-7 w-7 text-gray-600 hover:text-violet-500 cursor-pointer" />
- 
-                 
+                <MessageCircle className="h-7 w-7 text-white hover:text-violet-300 cursor-pointer" />
               </Link>
             </div>
           )}
 
-          <div className="group relative">
-            <img
-              className="rounded-full h-12 w-12 cursor-pointer"
-              src={userProfile?.profileImage || assets.profile_icon}
-              alt="profile"
-            />
-            <div className="group-hover:block hidden absolute right-0 pt-4 z-10">
-              <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded shadow-lg">
-                <Link to="/profile" className="cursor-pointer hover:text-black">
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen((s) => !s)}
+              className=" cursor-pointer rounded-full h-11 w-11 overflow-hidden border-2 border-transparent hover:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
+              aria-expanded={menuOpen}
+              aria-haspopup="true"
+            >
+              <img
+                className="h-full w-full object-cover"
+                src={userProfile?.profileImage || assets.profile_icon}
+                alt="profile"
+              />
+            </button>
+
+            <div
+              className={`absolute right-0 mt-2 z-50 w-44 transform origin-top-right transition duration-150 ${
+                menuOpen
+                  ? "opacity-100 scale-100"
+                  : "opacity-0 scale-95 pointer-events-none"
+              }`}
+            >
+              <div className="bg-slate-800 text-gray-100 rounded-lg shadow-lg border border-slate-700 py-2 px-3">
+                <Link
+                  to="/profile"
+                  className="block py-2 px-2 hover:text-violet-300"
+                >
                   My Profile
                 </Link>
 
                 {token && token !== "" ? (
-                  <p
-                    className="cursor-pointer hover:text-black"
-                    onClick={logout}
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      logout();
+                    }}
+                    className="w-full text-left py-2 px-2 hover:text-violet-300"
                   >
                     Logout
-                  </p>
+                  </button>
                 ) : (
-                  <Link to="/login" className="cursor-pointer hover:text-black">
+                  <Link
+                    to="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="block py-2 px-2 hover:text-violet-300"
+                  >
                     Login
                   </Link>
                 )}
