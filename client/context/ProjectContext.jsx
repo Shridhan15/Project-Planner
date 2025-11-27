@@ -87,7 +87,7 @@ const ProjectContextProvider = (props) => {
         // Connect socket only once
         if (!socket.current) {
           socket.current = io(backendUrl, {
-            transports: ["websocket"], // Force WebSocket
+            transports: ["websocket"],
             withCredentials: true,
           });
         }
@@ -95,7 +95,10 @@ const ProjectContextProvider = (props) => {
         // Register user
         socket.current.emit("register", user._id);
 
-        // Listen to new notifications
+        // 🔥 Prevent duplicate listeners
+        socket.current.off("new_notification");
+
+        // New listener
         socket.current.on("new_notification", (notification) => {
           console.log("📨 New Notification:", notification);
           setNotifications((prev) => [notification, ...prev]);

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { assets } from "../assets/assets";
 import { Link, useLocation } from "react-router-dom";
 import { ProjectContext } from "../../context/ProjectContext";
@@ -16,10 +16,31 @@ const Navbar = () => {
     setFilteredProjects,
     searchTerm,
     setSearchTerm,
+    fetchUserProfile,
   } = useContext(ProjectContext);
 
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // ⭐ NEW: Reference for menu container
+  const menuRef = useRef(null);
+
+  // ⭐ NEW: Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   const logout = () => {
     setUserProfile(null);
@@ -27,6 +48,12 @@ const Navbar = () => {
     setToken("");
     navigate("/login");
   };
+
+  useEffect(() => {
+    if (token) {
+      fetchUserProfile();
+    }
+  }, [token]);
 
   const handleSearch = (e) => {
     const keyword = e.target.value.toLowerCase();
@@ -44,6 +71,7 @@ const Navbar = () => {
       const techMatch = project.techStack?.some((tech) =>
         tech.toLowerCase().includes(keyword)
       );
+
       return skillsMatch || techMatch;
     });
 
@@ -67,7 +95,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Middle: Search input  */}
+        {/* Search Bar */}
         {location.pathname === "/" && (
           <div className="hidden md:block md:ml-6 w-full max-w-lg">
             <input
@@ -80,10 +108,11 @@ const Navbar = () => {
           </div>
         )}
 
-        {/*  Notification + Profile */}
+        {/* Notification + Profile */}
         <div className="flex items-center gap-4 ml-4">
-          {token && <NotificationBell className="" token={token} />}
-          {token && token !== "" && (
+          {token && <NotificationBell token={token} />}
+
+          {token && (
             <div className="mr-2">
               <Link to="/messages" className="relative">
                 <MessageCircle className="h-7 w-7 text-white hover:text-violet-300 cursor-pointer" />
@@ -93,10 +122,8 @@ const Navbar = () => {
 
           <div className="relative">
             <button
-              onClick={() => setMenuOpen((s) => !s)}
-              className=" cursor-pointer rounded-full h-11 w-11 overflow-hidden border-2 border-transparent hover:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
-              aria-expanded={menuOpen}
-              aria-haspopup="true"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              className="cursor-pointer rounded-full h-11 w-11 overflow-hidden border-2 border-transparent hover:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
             >
               <img
                 className="h-full w-full object-cover"
@@ -105,7 +132,9 @@ const Navbar = () => {
               />
             </button>
 
+            {/* ⭐ MENU WITH REF */}
             <div
+              ref={menuRef}
               className={`absolute right-0 mt-2 z-50 w-44 transform origin-top-right transition duration-150 ${
                 menuOpen
                   ? "opacity-100 scale-100"
@@ -115,12 +144,13 @@ const Navbar = () => {
               <div className="bg-slate-800 text-gray-100 rounded-lg shadow-lg border border-slate-700 py-2 px-3">
                 <Link
                   to="/profile"
+                  onClick={() => setMenuOpen(false)}
                   className="block py-2 px-2 hover:text-violet-300"
                 >
                   My Profile
                 </Link>
 
-                {token && token !== "" ? (
+                {token ? (
                   <button
                     onClick={() => {
                       setMenuOpen(false);

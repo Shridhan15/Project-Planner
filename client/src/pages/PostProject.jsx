@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { ProjectContext } from "../../context/ProjectContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Send } from "lucide-react";
 
 const PostProject = () => {
   const [title, setTitle] = useState("");
@@ -19,7 +20,6 @@ const PostProject = () => {
       return;
     }
 
-    // 🔥 Minimum 40 characters check
     if (desc.trim().length < 40) {
       toast.error("Description should be at least 40 characters long!");
       return;
@@ -31,9 +31,7 @@ const PostProject = () => {
       const { data } = await axios.post(
         backendUrl + "/api/project/enhance-desc",
         { text: desc },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (data.enhancedText) {
@@ -50,6 +48,7 @@ const PostProject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const formData = new FormData();
       formData.append("title", title);
@@ -59,15 +58,11 @@ const PostProject = () => {
 
       if (image) formData.append("image", image);
 
-      const response = await axios.post(
-        backendUrl + "/api/project/add",
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.post(backendUrl + "/api/project/add", formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      if (response.data.success) {
+      if (res.data.success) {
         toast.success("Project submitted successfully!");
         setTitle("");
         setDesc("");
@@ -76,7 +71,7 @@ const PostProject = () => {
         setImage(null);
         navigate("/");
       } else {
-        toast.error(response.data.message || "Failed to submit project.");
+        toast.error(res.data.message || "Failed to submit project.");
       }
     } catch (error) {
       console.error("Error submitting project:", error);
@@ -85,99 +80,101 @@ const PostProject = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-25">
-      <h2 className="text-2xl font-bold mb-4 text-center">
-        Post a New Project
-      </h2>
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-6 bg-white/80 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-gray-200"
+    <div className="max-w-3xl mx-auto mt-28 px-4">
+      <div
+        className="bg-gradient-to-br from-slate-900/80 via-violet-900/40 to-black/70 
+      backdrop-blur-xl shadow-2xl rounded-2xl border border-slate-700 p-8 text-gray-200"
       >
-        {/* Title */}
-        <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-medium">Project Title</label>
-          <input
-            type="text"
-            name="title"
-            placeholder="Enter a clear & short title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-        </div>
+        <h2 className="text-3xl font-bold text-center mb-6 text-violet-300">
+          Post a New Project 🚀
+        </h2>
 
-        {/* Description + Enhance Button */}
-        <div className="flex flex-col gap-1 relative">
-          <label className="text-gray-700 font-medium">
-            Project Description
-          </label>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Title */}
+          <div>
+            <label className="text-gray-300 font-medium">Project Title</label>
+            <input
+              type="text"
+              placeholder="Enter project title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="w-full mt-1 px-4 py-2 bg-slate-800 border border-slate-700 
+              rounded-lg text-gray-200 focus:ring-2 focus:ring-violet-500 outline-none transition"
+            />
+          </div>
+          {/* Description */}
+          <div className="relative">
+            <label className="text-gray-300 font-medium">
+              Project Description
+            </label>
 
-          <textarea
-            name="description"
-            placeholder="Describe your project goals, features, and expectations..."
-            value={desc}
-            onChange={(e) => setDesc(e.target.value)}
-            required
-            className="w-full h-40 border px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none pr-32 resize-none"
-          />
+            <textarea
+              placeholder="Describe your project goals, features, expectations..."
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              required
+              className="w-full mt-1 h-40 px-4 py-3 bg-slate-800 border border-slate-700 
+              rounded-xl text-gray-200 resize-none focus:ring-2 focus:ring-violet-500 outline-none pr-32 transition"
+            />
 
-          {/* AI Enhance Button */}
+            <button
+              type="button"
+              onClick={enhanceDescription}
+              className="absolute right-3 top-[52px] bg-violet-600 hover:bg-violet-700 
+              text-white px-4 py-1.5 rounded-full text-sm shadow-md cursor-pointer hover:scale-105 transition"
+            >
+              {enhancing ? "Enhancing..." : " Enhance"}
+            </button>
+          </div>
+          {/* Skills */}
+          <div>
+            <label className="text-gray-300 font-medium">Required Skills</label>
+            <input
+              type="text"
+              placeholder="React, Node.js, MongoDB"
+              value={skillsRequired}
+              onChange={(e) => setSkillsRequired(e.target.value)}
+              className="w-full mt-1 px-4 py-2 bg-slate-800 border border-slate-700 
+              rounded-lg text-gray-200 focus:ring-2 focus:ring-violet-500 outline-none transition"
+            />
+          </div>
+          {/* Tech Stack */}
+          <div>
+            <label className="text-gray-300 font-medium">Tech Stack</label>
+            <input
+              type="text"
+              placeholder="MERN, Django, Flutter"
+              value={techStack}
+              onChange={(e) => setTechStack(e.target.value)}
+              className="w-full mt-1 px-4 py-2 bg-slate-800 border border-slate-700 
+              rounded-lg text-gray-200 focus:ring-2 focus:ring-violet-500 outline-none transition"
+            />
+          </div>
+          {/* Image */}
+          <div>
+            <label className="text-gray-300 font-medium">Project Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+              className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-700 
+              rounded-lg text-gray-300 cursor-pointer focus:ring-2 focus:ring-violet-500 outline-none transition"
+            />
+          </div>
+          {/* Submit Button */}
+
           <button
-            type="button"
-            onClick={enhanceDescription}
-            className="absolute cursor-pointer right-3 top-[52px] bg-purple-600 text-white px-4 py-1.5 rounded-full text-sm shadow hover:bg-purple-700 hover:scale-105 transition-all"
+            type="submit"
+            className="w-full bg-violet-600 hover:bg-violet-700 text-white 
+  font-semibold py-3 rounded-xl shadow-lg hover:scale-[1.02] 
+  transition cursor-pointer inline-flex items-center justify-center gap-2"
           >
-            {enhancing ? "Enhancing..." : "✨ Enhance"}
+            <Send className="w-5 h-5" />
+            Submit Project
           </button>
-        </div>
-
-        {/* Skills Required */}
-        <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-medium">Required Skills</label>
-          <input
-            type="text"
-            name="skillsRequired"
-            placeholder="e.g. React, Node.js, MongoDB"
-            value={skillsRequired}
-            onChange={(e) => setSkillsRequired(e.target.value)}
-            className="w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-        </div>
-
-        {/* Tech Stack */}
-        <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-medium">Tech Stack</label>
-          <input
-            type="text"
-            name="techStack"
-            placeholder="e.g. MERN, Django, Flutter"
-            value={techStack}
-            onChange={(e) => setTechStack(e.target.value)}
-            className="w-full border px-3 py-2 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-        </div>
-
-        {/* Image Upload */}
-        <div className="flex flex-col gap-1">
-          <label className="text-gray-700 font-medium">Project Image</label>
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
-            className="w-full border px-3 py-2 rounded-lg bg-gray-50 cursor-pointer focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full cursor-pointer bg-blue-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:bg-blue-700 hover:scale-[1.02] transition-all"
-        >
-          🚀 Submit Project
-        </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

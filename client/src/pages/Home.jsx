@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
 import { ProjectContext } from "../../context/ProjectContext";
 import { toast } from "react-toastify";
+import { Rocket } from "lucide-react";
 
 const Home = () => {
   const {
@@ -58,18 +59,12 @@ const Home = () => {
         <div className="mt-8 flex items-center justify-center gap-4">
           <button
             onClick={handleClick}
-            className=" cursor-pointer inline-flex items-center gap-3 px-6 py-3 rounded-full
-             bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold
-             shadow-lg hover:scale-105 transform transition"
+            className="cursor-pointer inline-flex items-center gap-3 px-6 py-3 rounded-full
+  bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold
+  shadow-lg hover:scale-105 transform transition"
           >
-            🚀 List Your Project
-          </button>
-
-          <button
-            onClick={() => navigate("/projects")}
-            className="px-4 py-2 rounded-full border border-white/10 text-sm text-gray-300 hover:bg-white/5 transition"
-          >
-            Browse Projects
+            <Rocket className="w-5 h-5 text-white" />
+            List Your Project
           </button>
         </div>
       </section>

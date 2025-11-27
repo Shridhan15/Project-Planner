@@ -232,12 +232,20 @@ function MessagePage() {
   }, []);
 
   return (
-    <div className="flex h-[calc(100vh-64px)] bg-gray-50 ">
-      <div className="w-1/3 bg-white shadow-md border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200 bg-gray-50 font-bold   sticky top-[70px] z-10">
+    <div className="flex h-[calc(100vh-64px)] bg-gradient-to-br from-slate-800 via-slate-900 to-black text-white">
+      {/* LEFT SIDEBAR */}
+      {/* LEFT SIDEBAR */}
+      <div className="w-1/3 border-r border-white/10 backdrop-blur-xl bg-white/5 shadow-xl">
+        {/* Sidebar Header */}
+        <div
+          className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-lg 
+    font-bold text-lg sticky top-16 z-10 shadow-md"
+        >
           Messages
         </div>
-        <div className="flex-1  overflow-y-auto mt-20">
+
+        {/* Chats List */}
+        <div className="flex-1 overflow-y-auto px-2  pt-20">
           {chats.map((chat) => {
             const otherUser = getOtherUser(chat);
             const chatId = getChatId(userProfile, otherUser);
@@ -245,12 +253,17 @@ function MessagePage() {
             return (
               <div
                 key={chatId}
-                className={`p-4 cursor-pointer transition ${
-                  selectedChat &&
-                  getChatId(userProfile, getOtherUser(selectedChat)) === chatId
-                    ? "bg-violet-50"
-                    : "hover:bg-gray-100"
-                }`}
+                className={`
+    p-3 cursor-pointer rounded-lg 
+    transition-all duration-200 ease-out mb-2
+    border border-transparent
+    ${
+      selectedChat &&
+      getChatId(userProfile, getOtherUser(selectedChat)) === chatId
+        ? "bg-violet-600/20 border-violet-400/40 shadow-md scale-[1.02]"
+        : "hover:bg-white/10"
+    }
+  `}
                 onClick={() =>
                   setSelectedChat({
                     _id: chatId,
@@ -261,24 +274,16 @@ function MessagePage() {
                 }
               >
                 <div className="flex items-center gap-3">
-                  {otherUser?.profileImage ? (
-                    <img
-                      src={otherUser.profileImage}
-                      alt={otherUser.name}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <img
-                      src={assets.profile_icon}
-                      alt="profile"
-                      className="w-10 h-10 rounded-full"
-                    />
-                  )}
+                  <img
+                    src={otherUser?.profileImage || assets.profile_icon}
+                    className="w-11 h-11 rounded-full border border-white/20 object-cover"
+                    alt="profile"
+                  />
                   <div>
-                    <div className="font-semibold text-gray-800">
-                      {otherUser?.name || "Unknown"}
+                    <div className="font-semibold text-white">
+                      {otherUser?.name}
                     </div>
-                    <div className="text-sm text-gray-500 truncate">
+                    <div className="text-sm text-gray-300 truncate">
                       {chat.lastMessage || "No messages yet"}
                     </div>
                   </div>
@@ -289,38 +294,48 @@ function MessagePage() {
         </div>
       </div>
 
-      {/* Right panel: chat box */}
-      <div className="flex-1 flex flex-col bg-white shadow-md">
+      {/* RIGHT SIDE - CHAT BOX */}
+      <div className="flex-1 flex flex-col pt-16">
         {selectedChat ? (
           <>
-            <div className="p-4 flex gap-3 border-b border-gray-200 bg-gray-50 font-semibold sticky top-[65px] z-10">
+            {/* Chat Header */}
+            <div
+              className="p-4 flex gap-3 border-b border-white/10 bg-white/5 
+          backdrop-blur-xl font-semibold sticky top-[64px] z-10 shadow-lg"
+            >
               <img
                 src={
                   getOtherUser(selectedChat).profileImage || assets.profile_icon
                 }
-                className="w-8 h-8 rounded-full object-cover inline-block ml-4"
+                className="w-9 h-9 rounded-full border border-white/20 object-cover ml-2"
                 alt=""
               />
-              {getOtherUser(selectedChat).name}
+              <span className="text-white">
+                {getOtherUser(selectedChat).name}
+              </span>
             </div>
 
-            <div className="flex-1 p-4 overflow-y-auto bg-gray-100">
+            {/* Messages Area */}
+            <div className="flex-1 p-5 overflow-y-auto bg-black/20">
               {messages.map((msg) => (
                 <div
                   key={msg._id}
-                  className={`mb-2 flex ${
+                  className={`mb-3 flex ${
                     msg.from_user_id._id === userProfile._id
                       ? "justify-end"
                       : "justify-start"
                   }`}
                 >
                   <div
-                    className={`px-4 py-2 rounded-lg shadow-md max-w-xs break-words ${
-                      msg.from_user_id._id === userProfile._id
-                        ? "bg-violet-500 text-white"
-                        : "bg-white text-gray-800"
-                    }`}
                     ref={scrollRef}
+                    className={`
+                  px-4 py-2 rounded-xl max-w-xs break-words shadow-md 
+                  ${
+                    msg.from_user_id._id === userProfile._id
+                      ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-violet-500/30"
+                      : "bg-white/10 text-gray-200 border border-white/10"
+                  }
+                `}
                   >
                     {msg.text}
                   </div>
@@ -328,19 +343,24 @@ function MessagePage() {
               ))}
             </div>
 
-            {/* Input bar  */}
-            <div className="p-4 bg-gray-50 border-t border-gray-200 flex">
+            {/* Input Bar */}
+            <div className="p-4 bg-white/5 backdrop-blur-xl border-t border-white/10 flex gap-2">
               <input
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-violet-400"
+                className="flex-1 bg-black/20 border border-white/20 text-white 
+              rounded-lg px-4 py-2 focus:ring-2 focus:ring-violet-500 
+              outline-none placeholder-gray-400"
                 onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
               />
+
               <button
                 onClick={handleSendMessage}
-                className="px-4 py-2 bg-violet-500 text-white rounded-lg hover:bg-violet-600 transition"
+                className="px-5 py-2 rounded-lg bg-gradient-to-r 
+              from-violet-600 to-indigo-600 text-white shadow-lg
+              hover:scale-105 active:scale-95 transition-all"
               >
                 Send
               </button>

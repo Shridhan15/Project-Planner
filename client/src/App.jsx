@@ -20,7 +20,11 @@ const App = () => {
     useContext(ProjectContext);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white transition-colors duration-200">
+   <div
+  className="flex flex-col min-h-screen 
+  bg-gradient-to-br from-slate-700 via-slate-900 to-violet-900/30 
+  text-gray-100 transition-colors duration-300"
+>
       <ToastContainer />
       <Navbar />
 

@@ -25,10 +25,7 @@ const EditProfile = () => {
       }
       formData.append("name", name ? name : userProfile.name);
       formData.append("email", email ? email : userProfile.email);
-      formData.append(
-        "mobileNumber",
-        mobileNumber ? mobileNumber : ""
-      );
+      formData.append("mobileNumber", mobileNumber ? mobileNumber : "");
       formData.append(
         "yearOfStudy",
         yearOfStudy ? yearOfStudy : userProfile.yearOfStudy
@@ -68,29 +65,44 @@ const EditProfile = () => {
     userProfile && (
       <form
         onSubmit={handleSubmit}
-        className="max-w-4xl mx-auto mt-25 bg-white p-8 rounded-xl shadow-xl space-y-6"
+        className="
+        max-w-4xl mx-auto mt-24 p-10 rounded-2xl
+        bg-white/10 backdrop-blur-xl shadow-2xl 
+        border border-white/20 space-y-8
+      "
       >
-        <h2 className="text-3xl font-bold text-center text-gray-800">
+        {/* ---- Heading ---- */}
+        <h2
+          className="text-3xl font-bold text-center 
+        text-violet-200 drop-shadow-sm"
+        >
           Edit Profile
         </h2>
 
-        {/*----------- Profile Image Upload --------------*/}
+        {/* ---- Profile Image ---- */}
         <div className="flex justify-center">
           <label htmlFor="image" className="relative group cursor-pointer">
             <img
               src={
                 profileImage
-                  ? URL.createObjectURL(profileImage) // preview selected image
-                  : userProfile.profileImage || assets.profile_icon  
+                  ? URL.createObjectURL(profileImage)
+                  : userProfile.profileImage || assets.profile_icon
               }
               alt="Profile"
-              className="w-28 h-28 object-cover rounded-full border-2 border-gray-300 shadow-md group-hover:opacity-80 transition duration-200"
+              className="
+              w-32 h-32 rounded-full object-cover 
+              border-2 border-violet-400/40 shadow-lg 
+              group-hover:opacity-80 transition
+            "
             />
 
             <img
               src={assets.upload_icon}
               alt="Upload"
-              className="absolute -bottom-2 -right-2 w-8 h-8 bg-black rounded-full p-1 border border-gray-300"
+              className="
+              absolute -bottom-2 -right-2 w-9 h-9 p-1.5 rounded-full
+              bg-black/70 border border-white/20 shadow-md
+            "
             />
 
             <input
@@ -100,124 +112,154 @@ const EditProfile = () => {
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files[0];
-                if (file) {
-                  setProfileImage(file);
-                }
+                if (file) setProfileImage(file);
               }}
             />
           </label>
         </div>
 
-        {/* Input Fields */}
+        {/* ---- Inputs ---- */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* -----------Left Column----------- */}
-          <div className="space-y-4">
+          {/* LEFT SIDE */}
+          <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Name
-              </label>
+              <label className="text-gray-300 text-sm font-medium">Name</label>
               <input
                 type="text"
-                name="name"
-                onChange={(e) => setName(e.target.value)}
+                required
                 defaultValue={userProfile.name}
-                required 
-                className="mt-1 w-full px-4 py-2 border rounded-md bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setName(e.target.value)}
+                className="
+                mt-1 w-full px-4 py-2 rounded-lg
+                bg-white/10 text-white placeholder-gray-400
+                border border-white/20 focus:ring-2
+                focus:ring-violet-400 outline-none
+              "
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-gray-300 text-sm font-medium">
                 Mobile Number
               </label>
               <input
-                name="mobileNumber"
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (/^\d{0,10}$/.test(value)) {
-                    setMobileNumber(value);
-                  }
-                }} 
-                defaultValue={userProfile.mobileNumber}
                 type="tel"
-                pattern="\d{10}"
                 inputMode="numeric"
+                defaultValue={userProfile.mobileNumber}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (/^\d{0,10}$/.test(val)) setMobileNumber(val);
+                }}
                 placeholder="Enter 10-digit mobile number"
-                className="mt-1 w-full px-4 py-2 border rounded-md bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="
+                mt-1 w-full px-4 py-2 rounded-lg
+                bg-white/10 text-white placeholder-gray-400
+                border border-white/20 focus:ring-2
+                focus:ring-violet-400 outline-none
+              "
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
+              <label className="text-gray-300 text-sm font-medium">Email</label>
               <input
-                name="email"
-                required
                 disabled
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
                 defaultValue={userProfile.email}
-                className="mt-1 w-full px-4 py-2 border rounded-md bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="
+                mt-1 w-full px-4 py-2 rounded-lg
+                bg-white/5 text-gray-400 cursor-not-allowed
+                border border-white/10
+              "
               />
             </div>
           </div>
 
-          {/* ---------Right Column-------------- */}
-          <div className="space-y-4">
+          {/* RIGHT SIDE */}
+          <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-gray-300 text-sm font-medium">
                 Year of Study
               </label>
               <input
-                name="yearOfStudy"
-                onChange={(e) => setYearOfStudy(e.target.value)}
                 type="text"
                 defaultValue={userProfile.yearOfStudy}
-                className="mt-1 w-full px-4 py-2 border rounded-md bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setYearOfStudy(e.target.value)}
+                className="
+                mt-1 w-full px-4 py-2 rounded-lg
+                bg-white/10 text-white placeholder-gray-400
+                border border-white/20 focus:ring-2
+                focus:ring-violet-400 outline-none
+              "
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-gray-300 text-sm font-medium">
                 Skills
               </label>
               <input
-                name="skills"
-                onChange={(e) => setSkills(e.target.value)}
                 type="text"
                 defaultValue={userProfile.skills}
-                className="mt-1 w-full px-4 py-2 border rounded-md bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setSkills(e.target.value)}
+                className="
+                mt-1 w-full px-4 py-2 rounded-lg
+                bg-white/10 text-white placeholder-gray-400
+                border border-white/20 focus:ring-2
+                focus:ring-violet-400 outline-none
+              "
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="text-gray-300 text-sm font-medium">
                 Tech Stack
               </label>
               <input
-                name="technologiesKnown"
-                onChange={(e) => settechnologiesKnown(e.target.value)}
                 type="text"
                 defaultValue={userProfile.technologiesKnown}
-                className="mt-1 w-full px-4 py-2 border rounded-md bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => settechnologiesKnown(e.target.value)}
+                className="
+                mt-1 w-full px-4 py-2 rounded-lg
+                bg-white/10 text-white placeholder-gray-400
+                border border-white/20 focus:ring-2
+                focus:ring-violet-400 outline-none
+              "
               />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-center">
+        {/* ---- Buttons ---- */}
+        <div className="flex justify-center gap-4 pt-4">
+          {/* Save Button */}
           <button
             type="submit"
-            className="cursor-pointer mt-4 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
+            className="
+            cursor-pointer px-6 py-2 rounded-lg 
+            bg-gradient-to-r from-violet-600 to-indigo-600 
+            text-white font-semibold 
+            hover:from-violet-500 hover:to-indigo-500
+            hover:shadow-violet-500/40 
+            border border-violet-400/30
+            active:scale-95 transition-all duration-200
+          "
           >
             Save Changes
           </button>
 
+          {/* Cancel Button */}
           <button
             type="button"
-            className="cursor-pointer ml-1 mt-4 px-6 py-2 bg-red-400 text-white font-medium rounded-lg hover:bg-red-500 transition"
             onClick={() => navigate("/profile")}
+            className="
+            cursor-pointer px-6 py-2 rounded-lg 
+            bg-red-500/20 backdrop-blur-xl 
+            text-red-200 font-semibold 
+            border border-red-400/30 
+            hover:bg-red-500/30 hover:text-red-100
+            hover:shadow-red-500/40 
+            active:scale-95 transition-all duration-200
+          "
           >
             Cancel
           </button>

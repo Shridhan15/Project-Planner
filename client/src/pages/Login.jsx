@@ -1,18 +1,17 @@
-import React, { useState } from "react";
-import { useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { ProjectContext } from "../../context/ProjectContext.jsx";
-import { useEffect } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
-  const { backendUrl, token, setToken, navigate,userProfile} = useContext(ProjectContext);
+  const { backendUrl, token, setToken, navigate } = useContext(ProjectContext);
 
   const [currentState, setCurrentState] = useState("Sign Up");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     console.log(backendUrl);
@@ -27,7 +26,7 @@ const Login = () => {
           email,
           password,
         });
-        // console.log("Response:", response.data);
+
         if (response.data.success) {
           toast.success("Registration successful!");
           setCurrentState("Login");
@@ -41,13 +40,10 @@ const Login = () => {
           email,
           password,
         });
-        // console.log("Response:", response.data);
+
         if (response.data.success) {
           toast.success("Login successful!");
-          console.log("User token received:", response.data.token);
-
-          setToken(response.data.token); 
-
+          setToken(response.data.token);
           localStorage.setItem("token", response.data.token);
         } else {
           toast.error(response.data.message || "Login failed.");
@@ -60,34 +56,22 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (token) {
-      navigate("/");
-    }
+    if (token) navigate("/");
   }, [token]);
 
   return (
     <form
       onSubmit={onSubmitHandler}
-      className="flex flex-col  items-center justify-center gap-4 p-4 w-full max-w-md mx-auto mt-25 py-10 bg-gray-100 shadow-lg rounded-lg"
+      className="flex flex-col items-center justify-center gap-5 p-6 w-full max-w-md mx-auto mt-32 
+      bg-gradient-to-br from-slate-900/80 via-violet-900/50 to-black/60 
+      backdrop-blur-md border border-slate-700 
+      shadow-xl rounded-2xl text-gray-200"
     >
-      {/* <div className="cursor-pointer text-blue-500 hover:underline font-light">
-        {currentState === "Login" ? (
-          <p onClick={() => setCurrentState("Sign Up")}>Sign Up</p>
-        ) : (
-          <p onClick={() => setCurrentState("Login")}>
-            Log In
-          </p>
-        )}
-      </div>
-      <div className="inline-flex items-center gap-2 mb-2 mt-10">
-        <p className="prata-regular text-3xl">{currentState} </p>
-        <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
-      </div> */}
-
-      <p className="font-medium text-2xl">
+      {/* Toggle Login/Signup */}
+      <p className="font-medium text-2xl text-center mb-2">
         <span
-          className={`cursor-pointer text-blue-500 hover:underline ${
-            currentState === "Sign Up" ? "text-green-400" : ""
+          className={`cursor-pointer hover:text-violet-400 transition ${
+            currentState === "Sign Up" ? "text-violet-300 font-semibold" : ""
           }`}
           onClick={() => setCurrentState("Sign Up")}
         >
@@ -95,58 +79,76 @@ const Login = () => {
         </span>{" "}
         /{" "}
         <span
-          className={`cursor-pointer text-blue-500 hover:underline ${
-            currentState === "Login" ? "text-green-400" : ""
+          className={`cursor-pointer hover:text-violet-400 transition ${
+            currentState === "Login" ? "text-violet-300 font-semibold" : ""
           }`}
           onClick={() => setCurrentState("Login")}
         >
           Login
-        </span>{" "}
+        </span>
       </p>
 
-      {currentState === "Login" ? (
-        ""
-      ) : (
+      {/* Name Field (Only for Sign Up) */}
+      {currentState !== "Login" && (
         <input
-          className="border border-gray-500 w-full px-3 py-2"
+          className="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 
+          text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 
+          focus:ring-violet-500 transition"
           type="text"
-          placeholder="enter name"
+          placeholder="Enter your name"
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
       )}
 
+      {/* Email */}
       <input
-        className="border border-gray-500 w-full px-3 py-2"
+        className="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 
+        text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 
+        focus:ring-violet-500 transition"
         type="email"
-        placeholder="enter email"
+        placeholder="Enter your email"
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
 
-      <input
-        className="border border-gray-500 w-full px-3 py-2"
-        type="password"
-        placeholder="enter password"
-        required
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+      {/* Password with Eye Button */}
+      <div className="w-full relative">
+        <input
+          className="w-full px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 
+          text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 
+          focus:ring-violet-500 transition"
+          type={showPassword ? "text" : "password"}
+          placeholder="Enter your password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-      <div>
+        {/* Eye Button */}
         <button
-          type="submit"
-          className={`cursor-pointer  ${
-            currentState === "Login"
-              ? "bg-blue-500 hover:bg-blue-700"
-              : "bg-green-500 hover:bg-green-700"
-          } text-white px-4 py-2 rounded-lg`}
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white"
         >
-          {currentState}
+          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
       </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        className={`w-full cursor-pointer py-2 rounded-lg text-white transition font-semibold 
+        ${
+          currentState === "Login"
+            ? "bg-violet-600 hover:bg-violet-700"
+            : "bg-green-600 hover:bg-green-700"
+        }`}
+      >
+        {currentState}
+      </button>
     </form>
   );
 };

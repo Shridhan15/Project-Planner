@@ -111,7 +111,7 @@ const NotificationBell = ({ token }) => {
 
       if (response.data.success) {
         setNotifications((prev) => prev.filter((n) => n._id !== notifId));
-        toast.success("Notification deleted successfully");
+        // toast.success("Notification deleted successfully");
       }
     } catch (error) {
       console.error("Error deleting notification:", error);
@@ -195,116 +195,140 @@ const NotificationBell = ({ token }) => {
   };
 
   return (
-    <div className="relative mr-4 " ref={dropdownRef}>
+    <div className="relative mr-4" ref={dropdownRef}>
+      {/* Bell Icon */}
       <FaBell
-        className="text-gray-700 w-6 h-6 cursor-pointer"
+        className="text-gray-300 w-6 h-6 cursor-pointer hover:text-violet-300 transition"
         onClick={handleBellClick}
       />
+
+      {/* Red Dot */}
       {hasUnread && (
-        <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-600"></span>
+        <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 shadow-red-500/50 shadow"></span>
       )}
 
+      {/* Dropdown */}
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-100 bg-slate-100 shadow-md rounded-md z-50 p-2 max-h-180 overflow-y-auto">
+        <div
+          className="absolute right-0 mt-3 w-80 max-h-96 overflow-y-auto 
+  bg-[#1d142a]/80 backdrop-blur-xl rounded-2xl shadow-xl 
+  border border-violet-400/20 p-3 z-50 animate-fadeIn"
+        >
+          {/* Mark all as read */}
           {notifications.length > 0 && hasUnread && (
-            <a
+            <button
               onClick={handleMarkAllRead}
-              className="mb-2  text-sm   text-blue-400 rounded hover:text-blue-800 cursor-pointer underline"
+              className="text-blue-300 hover:text-blue-200 text-xs underline mb-2 cursor-pointer"
             >
               Mark all as read
-            </a>
+            </button>
           )}
-          {notifications.length > 0 ? (
-            notifications.map((notif) => (
-              <div
-                key={notif._id}
-                className={`p-4 border rounded-md mb-4 shadow-sm ${
-                  notif.isRead ? "bg-white" : "bg-gray-100 font-medium"
-                }`}
-              >
-                <div className="flex justify-between items-start mb-2">
-                  <span
-                    onClick={() => handleNotificationClick(notif._id)}
-                    className="text-sm flex-1 cursor-pointer"
-                  >
-                    {notif.message}{" "}
-                    {notif.type === "joinRequest" && (
-                      <button
-                        onClick={() => navigate(`/author/${notif.sender._id}`)}
-                        className="text-blue-600 font-medium cursor-pointer hover:underline"
-                      >
-                        See Profile
-                      </button>
-                    )}
-                    {notif.type === "joinRequest" && (
-                      <span className="text-gray-500">
-                        . Check your email to contact.
-                      </span>
-                    )}
-                  </span>
-                  <div className="flex items-center gap-2 ml-4">
-                    <FaTimes
-                      className="text-red-500 text-lg cursor-pointer"
-                      onClick={() => handleDeleteNotification(notif._id)}
-                    />
-                  </div>
-                </div>
 
-                {requestStatusByProject &&
-                  requestStatusByProject[notif.project._id] && (
-                    <p className="text-sm text-gray-500">
-                      Request Status:{" "}
-                      <span className="font-medium">
-                        {requestStatusByProject[notif.project._id]}
-                      </span>
-                    </p>
+          {/* No Notifications */}
+          {notifications.length === 0 && (
+            <p className="text-sm text-gray-300 p-2 text-center">
+              No notifications
+            </p>
+          )}
+
+          {/* Notifications List */}
+          {notifications.map((notif) => (
+            <div
+              key={notif._id}
+              className={`rounded-xl p-4 mb-3 border shadow transition-all
+          ${
+            notif.isRead
+              ? "bg-white/5 border-white/10"
+              : "bg-violet-500/10 border-violet-400/20 shadow-violet-500/10"
+          }`}
+            >
+              {/* Header Row */}
+              <div className="flex justify-between items-start mb-2">
+                {/* Message */}
+                <span
+                  onClick={() => handleNotificationClick(notif._id)}
+                  className="text-sm text-gray-200 flex-1 cursor-pointer leading-snug"
+                >
+                  {notif.message}{" "}
+                  {notif.type === "joinRequest" && (
+                    <button
+                      onClick={() => navigate(`/author/${notif.sender._id}`)}
+                      className="text-violet-300 cursor-pointer hover:text-violet-200 ml-1 underline"
+                    >
+                      See Profile
+                    </button>
+                  )}
+                  {notif.type === "joinRequest" && (
+                    <span className="text-gray-400 text-xs ml-1">
+                      • Check your email to contact
+                    </span>
+                  )}
+                </span>
+
+                {/* Delete */}
+                <FaTimes
+                  className="text-red-400 text-lg cursor-pointer hover:text-red-300 transition"
+                  onClick={() => handleDeleteNotification(notif._id)}
+                />
+              </div>
+
+              {/* Request Status (Global) */}
+              {requestStatusByProject &&
+                requestStatusByProject[notif.project._id] && (
+                  <p className="text-xs text-gray-400">
+                    Status:{" "}
+                    <span className="font-medium text-gray-200">
+                      {requestStatusByProject[notif.project._id]}
+                    </span>
+                  </p>
+                )}
+
+              {/* Join Request Action Buttons */}
+              {notif.type === "joinRequest" && notif.joinRequest?.status && (
+                <div className="mt-3">
+                  {/* ACCEPTED */}
+                  {notif.joinRequest.status === "Accepted" && (
+                    <span className="text-sm text-green-300 bg-green-500/20 px-3 py-1 rounded-lg border border-green-400/30">
+                      Request Accepted
+                    </span>
                   )}
 
-                {notif.type === "joinRequest" && notif.joinRequest?.status && (
-                  <>
-                    {notif.joinRequest.status === "Accepted" && (
-                      <p className="text-sm text-green-700 bg-green-100 px-3 py-1 rounded inline-block mt-2">
-                        Request Accepted
-                      </p>
-                    )}
-                    {notif.joinRequest.status === "Rejected" && (
-                      <p className="text-sm text-red-700 bg-red-100 px-3 py-1 rounded inline-block mt-2">
-                        Request Rejected
-                      </p>
-                    )}
-                    {notif.joinRequest.status === "Sent" && (
-                      <div className="flex justify-start gap-3 mt-2">
-                        <button
-                          onClick={() =>
-                            handleAccept(
-                              notif.joinRequest._id,
-                              notif.project._id
-                            )
-                          }
-                          className="cursor-pointer px-4 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 transition"
-                        >
-                          Accept
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleReject(
-                              notif.joinRequest._id,
-                              notif.project._id
-                            )
-                          }
-                          className="cursor-pointer px-4 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            ))
-          ) : (
-            <p className="text-sm text-gray-500 p-2">No notifications</p>
-          )}
+                  {/* REJECTED */}
+                  {notif.joinRequest.status === "Rejected" && (
+                    <span className="text-sm text-red-300 bg-red-500/20 px-3 py-1 rounded-lg border border-red-400/30">
+                      Request Rejected
+                    </span>
+                  )}
+
+                  {/* PENDING (Sent) */}
+                  {notif.joinRequest.status === "Sent" && (
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() =>
+                          handleAccept(notif.joinRequest._id, notif.project._id)
+                        }
+                        className="cursor-pointer px-4 py-1 text-sm bg-green-500/30 
+                    text-green-200 border border-green-400/30 rounded-lg 
+                    hover:bg-green-500/40 transition active:scale-95"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleReject(notif.joinRequest._id, notif.project._id)
+                        }
+                        className="cursor-pointer px-4 py-1 text-sm bg-red-500/30 
+                    text-red-200 border border-red-400/30 rounded-lg 
+                    hover:bg-red-500/40 transition active:scale-95"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </div>

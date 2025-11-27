@@ -84,9 +84,10 @@ const ProjectCard = ({ project }) => {
 
   return (
     <form
-      className={`bg-[#0f0f10]/80 backdrop-blur-xl rounded-2xl shadow-lg 
-  border border-white/10 p-5 transition-all duration-300  h-[650px]
-  hover:scale-[1.03] hover:shadow-xl ${
+      className={`bg-white/10 backdrop-blur-xl rounded-2xl shadow-lg 
+  border border-white/20 p-5 transition-all duration-300 h-[650px]
+  hover:shadow-violet-500/30 hover:border-violet-400/30
+  ${
     project.status === "closed"
       ? "opacity-40 pointer-events-none grayscale"
       : ""
@@ -112,143 +113,127 @@ const ProjectCard = ({ project }) => {
       </p>
 
       {/* Skills */}
-      <div className="mb-3">
-        <strong className="text-gray-400">Required Skills:</strong>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {project.skillsRequired.map((skill, i) => (
-            <span
-              key={i}
-              className="
-          bg-blue-600/20 text-blue-300 
-          px-2 py-1 
-          text-xs font-medium
-          rounded-md 
-          border border-blue-500/30 
-          transition-all duration-300
-          hover:bg-blue-600/30 
-          hover:border-blue-400 
-          hover:text-blue-200
-          hover:shadow-blue-500/40 
-          hover:shadow-md
-          hover:scale-105
-        "
-            >
-              {skill}
-            </span>
-          ))}
-        </div>
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <strong className="text-gray-400 mr-2 whitespace-nowrap">
+          Required Skills:
+        </strong>
+
+        {project.skillsRequired.map((skill, i) => (
+          <span
+            key={i}
+            className="
+        bg-blue-600/20 text-blue-300 
+        px-2 py-1 
+        text-xs font-medium
+        rounded-md 
+        border border-blue-500/30 
+        transition-all duration-300
+        hover:bg-blue-600/30 
+        hover:border-blue-400 
+        hover:text-blue-200
+        hover:shadow-blue-500/40 
+        hover:shadow-md
+        hover:scale-105
+      "
+          >
+            {skill}
+          </span>
+        ))}
       </div>
 
       {/* Tech Stack */}
-      <div className="mb-4">
-        <strong className="text-gray-400">Tech Stack:</strong>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {project.techStack.map((tech, i) => (
-            <span
-              key={i}
-              className="
-          bg-green-600/20 text-green-300 
-          px-2 py-1 
-          text-xs font-medium
-          rounded-md 
-          border border-green-500/30 
-          transition-all duration-300
-          hover:bg-green-600/30 
-          hover:border-green-400 
-          hover:text-green-200
-          hover:shadow-green-500/40 
-          hover:shadow-md
-          hover:scale-105
-        "
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <strong className="text-gray-400 mr-2 whitespace-nowrap">
+          Tech Stack:
+        </strong>
+
+        {project.techStack.map((tech, i) => (
+          <span
+            key={i}
+            className="
+        bg-green-600/20 text-green-300 
+        px-2 py-1 
+        text-xs font-medium
+        rounded-md 
+        border border-green-500/30 
+        transition-all duration-300
+        hover:bg-green-600/30 
+        hover:border-green-400 
+        hover:text-green-200
+        hover:shadow-green-500/40 
+        hover:shadow-md
+        hover:scale-105
+      "
+          >
+            {tech}
+          </span>
+        ))}
       </div>
 
       {/* Author */}
-      <p className="text-sm text-gray-400 mb-4">
-        Posted by:{" "}
-        {project?.author?._id && userProfile?._id ? (
-          project.author._id === userProfile._id ? (
-            <span className="font-medium text-white">You</span>
-          ) : (
+      {/* Author + Request Button (side by side) */}
+      <div className="flex justify-between items-center mb-4">
+        {/* LEFT SIDE — Show author info ONLY IF not your project */}
+        {project.author._id !== userProfile._id && (
+          <p className="text-sm text-gray-400">
+            Posted by:{" "}
             <Link
               to={`/author/${project.author._id}`}
-              className="text-purple-400 hover:underline font-medium"
+              className="text-violet-400 hover:text-violet-300 hover:underline font-medium transition"
             >
               {project.author.name}
             </Link>
-          )
-        ) : (
-          <span className="italic text-gray-500">Unknown</span>
-        )}
-      </p>
-
-      {/* Buttons */}
-      {project.status === "open" &&
-        project?.author?._id &&
-        userProfile?._id &&
-        project.author._id !== userProfile._id && (
-          <div className="flex flex-col sm:flex-row gap-2">
-            {status ? (
-              <p className="text-sm font-medium text-gray-300">
-                Status:{" "}
-                <span
-                  className={`${
-                    status === "Sent"
-                      ? "text-yellow-400"
-                      : status === "Accepted"
-                      ? "text-green-400"
-                      : "text-red-400"
-                  }`}
-                >
-                  {status}
-                </span>
-              </p>
-            ) : (
-              <button
-                className="bg-blue-600 hover:bg-blue-700 text-white 
-            px-4 py-2 rounded-lg transition-all shadow-md "
-                onClick={handleRequestJoin}
-              >
-                Request to Join
-              </button>
-            )}
-          </div>
+          </p>
         )}
 
-      {/* Close Project Button */}
-      {project?.author?._id &&
-        userProfile?._id &&
-        project.author._id === userProfile._id &&
-        project.status === "open" && (
-          <button
-            type="button"
-            onClick={() => handleCloseProject(project._id)}
-            className=" curpo
-        relative 
-        px-5 py-2 
-        rounded-xl 
-        font-medium 
-        text-red-300 
-        border border-red-500/40 
-        bg-red-500/10 
-        backdrop-blur-md 
-        shadow-lg 
-        transition-all 
-        duration-300
-        hover:bg-red-600/20 
-        hover:border-red-500 
-        hover:text-red-200
-        hover:shadow-red-600/40
-        active:scale-95
-      "
-          >
-            Close Project
-          </button>
-        )}
+        {/* RIGHT SIDE — Joining or Status (only for non-author) */}
+        {project.status === "open" &&
+          project.author._id !== userProfile._id &&
+          (status ? (
+            <span
+              className={`px-3 py-1 rounded-lg text-sm font-medium 
+        backdrop-blur-md border shadow-md transition-all duration-300
+        ${
+          status === "Sent"
+            ? "text-yellow-300 border-yellow-400/30 bg-yellow-500/10 shadow-yellow-500/20"
+            : status === "Accepted"
+            ? "text-green-300 border-green-400/30 bg-green-500/10 shadow-green-500/20"
+            : "text-red-300 border-red-400/30 bg-red-500/10 shadow-red-500/20"
+        }`}
+            >
+              {status}
+            </span>
+          ) : (
+            <button
+              onClick={handleRequestJoin}
+              className="cursor-pointer px-4 py-1.5 text-sm font-medium
+          rounded-lg shadow-lg 
+          bg-gradient-to-r from-blue-600 to-violet-600 
+          text-white border border-white/10 
+          backdrop-blur-md
+          hover:from-blue-500 hover:to-violet-500
+          hover:shadow-blue-500/30 active:scale-95
+          transition-all duration-300"
+            >
+              Request to Join
+            </button>
+          ))}
+      </div>
+
+      {/* Close Project Button — ONLY for author */}
+      {project.author._id === userProfile._id && project.status === "open" && (
+        <button
+          type="button"
+          onClick={() => handleCloseProject(project._id)}
+          className="cursor-pointer relative px-5 py-2 rounded-xl font-medium 
+      text-red-300 border border-red-500/40 bg-red-500/10 backdrop-blur-md 
+      shadow-lg transition-all duration-300 hover:bg-red-600/20 
+      hover:border-red-500 hover:text-red-200 hover:shadow-red-600/40
+      active:scale-95"
+        >
+          Close Project
+        </button>
+      )}
     </form>
   );
 };

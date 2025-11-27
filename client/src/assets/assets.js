@@ -4,7 +4,9 @@ import profile_icon from './profile_icon.png';
 import attandence from './attandence.png';
 import coursemate from './coursemate.png';
 import event from './event.png';
+import smartHealth from './smartHealth.png';
 import lostfound from './lostfound.png';
+
 import resume from './resume.png';
 import default_image from './default.png'
 import upload_icon from './upload_icon.png';
@@ -64,7 +66,20 @@ const dummyProjects = [
     author: "Arjun Nair",
     email: "arjun@example.com",
     createdAt: "2025-07-05",
+  },
+  {
+    id: 6,
+    image: smartHealth,
+    title: "Smart Health Tracking Mobile App",
+    description:
+      "A mobile app that tracks daily health metrics such as steps, heart rate, hydration, and sleep. Users receive personalized insights, weekly health reports, and AI-driven recommendations for improving lifestyle.",
+    techStack: ["React Native", "Node.js", "MongoDB", "Bluetooth API"],
+    skillsRequired: ["React Native", "Mobile Development", "Health API", "UI/UX"],
+    author: "Ankit Sharma",
+    email: "ankit@example.com",
+    createdAt: "2025-08-12",
   }
+
 ];
 
 export default dummyProjects;
