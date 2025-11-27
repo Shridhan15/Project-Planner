@@ -96,7 +96,7 @@ const ProjectCard = ({ project }) => {
       {/* Image */}
       <div className="overflow-hidden rounded-xl mb-4">
         <img
-          className="w-full h-50 object-contain hover:scale-110 transition-all duration-500"
+          className="w-full h-50  object-contain hover:scale-110 transition-all duration-500"
           src={project?.image || assets.default_image}
           alt={project?.title}
         />
@@ -112,24 +112,29 @@ const ProjectCard = ({ project }) => {
         {project?.description}
       </p>
 
-      {/* Required Skills */}
+      {/* Skills */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <strong className="text-gray-400 mr-2 whitespace-nowrap">
           Required Skills:
         </strong>
 
-        {(project?.skillsRequired || []).map((skill, i) => (
+        {project?.skillsRequired.map((skill, i) => (
           <span
             key={i}
             className="
-          bg-blue-600/20 text-blue-300 
-          px-2 py-1 text-xs font-medium
-          rounded-md border border-blue-500/30 
-          transition-all duration-300
-          hover:bg-blue-600/30 hover:border-blue-400 
-          hover:text-blue-200 hover:shadow-blue-500/40 
-          hover:shadow-md hover:scale-105
-        "
+        bg-blue-600/20 text-blue-300 
+        px-2 py-1 
+        text-xs font-medium
+        rounded-md 
+        border border-blue-500/30 
+        transition-all duration-300
+        hover:bg-blue-600/30 
+        hover:border-blue-400 
+        hover:text-blue-200
+        hover:shadow-blue-500/40 
+        hover:shadow-md
+        hover:scale-105
+      "
           >
             {skill}
           </span>
@@ -142,53 +147,59 @@ const ProjectCard = ({ project }) => {
           Tech Stack:
         </strong>
 
-        {(project?.techStack || []).map((tech, i) => (
+        {project?.techStack.map((tech, i) => (
           <span
             key={i}
             className="
-          bg-green-600/20 text-green-300 
-          px-2 py-1 text-xs font-medium
-          rounded-md border border-green-500/30 
-          transition-all duration-300
-          hover:bg-green-600/30 hover:border-green-400 
-          hover:text-green-200 hover:shadow-green-500/40 
-          hover:shadow-md hover:scale-105
-        "
+        bg-green-600/20 text-green-300 
+        px-2 py-1 
+        text-xs font-medium
+        rounded-md 
+        border border-green-500/30 
+        transition-all duration-300
+        hover:bg-green-600/30 
+        hover:border-green-400 
+        hover:text-green-200
+        hover:shadow-green-500/40 
+        hover:shadow-md
+        hover:scale-105
+      "
           >
             {tech}
           </span>
         ))}
       </div>
 
-      {/* Author + Request Button */}
+      {/* Author */}
+      {/* Author + Request Button (side by side) */}
       <div className="flex justify-between items-center mb-4">
-        {/* Show Author only if NOT owner */}
+        {/* LEFT SIDE — Show author info ONLY IF not your project */}
         {project?.author?._id !== userProfile?._id && (
           <p className="text-sm text-gray-400">
             Posted by:{" "}
             <Link
-              to={`/author/${project?.author?._id}`}
+              to={`/author/${project.author._id}`}
               className="text-violet-400 hover:text-violet-300 hover:underline font-medium transition"
             >
-              {project?.author?.name}
+              {project.author.name}
             </Link>
           </p>
         )}
 
-        {/* Request / Status (only for non-author) */}
+        {/* RIGHT SIDE — Joining or Status (only for non-author) */}
         {project?.status === "open" &&
           project?.author?._id !== userProfile?._id &&
           (status ? (
             <span
               className={`px-3 py-1 rounded-lg text-sm font-medium 
-          backdrop-blur-md border shadow-md transition-all duration-300
-          ${
-            status === "Sent"
-              ? "text-yellow-300 border-yellow-400/30 bg-yellow-500/10 shadow-yellow-500/20"
-              : status === "Accepted"
-              ? "text-green-300 border-green-400/30 bg-green-500/10 shadow-green-500/20"
-              : "text-red-300 border-red-400/30 bg-red-500/10 shadow-red-500/20"
-          }`}
+        backdrop-blur-md border shadow-md transition-all duration-300
+        ${
+          status === "Sent"
+            ? "text-yellow-300 border-yellow-400/30 bg-yellow-500/10 shadow-yellow-500/20"
+            : status === "Accepted"
+            ? "text-green-300 border-green-400/30 bg-green-500/10 shadow-green-500/20"
+            : "text-red-300 border-red-400/30 bg-red-500/10 shadow-red-500/20"
+        }`}
             >
               {status}
             </span>
@@ -209,17 +220,17 @@ const ProjectCard = ({ project }) => {
           ))}
       </div>
 
-      {/* Close Project — ONLY for author */}
+      {/* Close Project Button — ONLY for author */}
       {project?.author?._id === userProfile?._id &&
         project?.status === "open" && (
           <button
             type="button"
-            onClick={() => handleCloseProject(project?._id)}
+            onClick={() => handleCloseProject(project._id)}
             className="cursor-pointer relative px-5 py-2 rounded-xl font-medium 
-        text-red-300 border border-red-500/40 bg-red-500/10 backdrop-blur-md 
-        shadow-lg transition-all duration-300 hover:bg-red-600/20 
-        hover:border-red-500 hover:text-red-200 hover:shadow-red-600/40
-        active:scale-95"
+      text-red-300 border border-red-500/40 bg-red-500/10 backdrop-blur-md 
+      shadow-lg transition-all duration-300 hover:bg-red-600/20 
+      hover:border-red-500 hover:text-red-200 hover:shadow-red-600/40
+      active:scale-95"
           >
             Close Project
           </button>
