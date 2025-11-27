@@ -16,12 +16,12 @@ const connectDB = async () => {
 
         await mongoose.connect(`${process.env.MONGO_URI}/project-partner`, {
 
-            serverSelectionTimeoutMS: 10000, // 10 seconds timeout
+            serverSelectionTimeoutMS: 10000, 
         });
 
     } catch (error) {
         console.error(" Error connecting to MongoDB:", error.message);
-        process.exit(1); // Stop the app if DB connection fails
+        process.exit(1); 
     }
 };
 

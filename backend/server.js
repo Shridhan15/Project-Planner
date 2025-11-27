@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import dotenv from 'dotenv-flow';
 import http from "http";
 import { Server } from "socket.io";
 import connectDB from './config/mongodb.js';
@@ -11,39 +11,55 @@ import notificationRouter from './routes/notificationRoutes.js';
 import messageRouter from './routes/messageRoutes.js';
 
 dotenv.config();
-const app = express();
 
-// ✅ Explicit CORS for REST API
-app.use(cors({
-    origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
+const app = express();
+ 
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    process.env.ADMIN_URL,
+    "http://localhost:5173", 
+    "http://localhost:5174", 
+].filter(Boolean);
+ 
+const uniqueOrigins = [...new Set(allowedOrigins)];
+
+console.log("Allowed CORS Origins:", uniqueOrigins);
+
+
+app.use(
+    cors({
+        origin: uniqueOrigins,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+    })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//  DB
 connectDB();
-
+ 
 const server = http.createServer(app);
 
-// ✅ Socket.IO CORS
+//  SOCKET.IO 
 const io = new Server(server, {
     cors: {
-        origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL],
+        origin: uniqueOrigins,
         methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true
-    }
+        credentials: true,
+    },
 });
 
 const userSocketMap = new Map();
 
+// SOCKET HANDLERS
 io.on("connection", (socket) => {
-    console.log("Socket connected:", socket.id);
+    console.log(" Socket connected:", socket.id);
 
     socket.on("register", (userId) => {
         userSocketMap.set(userId, socket.id);
-        console.log(`Registered socket for user ${userId}`);
+        console.log(` Registered user: ${userId}`);
     });
 
     socket.on("disconnect", () => {
@@ -53,23 +69,22 @@ io.on("connection", (socket) => {
                 break;
             }
         }
-        console.log("Socket disconnected:", socket.id);
+        console.log(" Socket disconnected:", socket.id);
     });
 });
 
+// ROUTES
+app.get("/", (req, res) => res.send("Hello from backend!"));
+app.use("/api/user", userRouter);
+app.use("/api/project", projectRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/notifications", notificationRouter);
+app.use("/api/messages", messageRouter);
+
+// RUN SERVER
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-    console.log(` Server running on port ${PORT}`);
+    console.log(` Server running (${process.env.NODE_ENV}) on port ${PORT}`);
 });
-
-app.get('/', (req, res) => {
-    res.send('Hello from the backend!');
-});
-
-app.use('/api/user', userRouter);
-app.use('/api/project', projectRouter);
-app.use('/api/admin', adminRouter);
-app.use('/api/notifications', notificationRouter);
-app.use('/api/messages', messageRouter);
 
 export { io, userSocketMap };

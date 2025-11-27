@@ -16,10 +16,10 @@ const addProject = async (req, res) => {
 
         let imageUrl = "";
         let imagePublicId = "";
- 
+
         if (req.file) {
-            imageUrl = req.file.path;         
-            imagePublicId = req.file.filename;  
+            imageUrl = req.file.path;
+            imagePublicId = req.file.filename;
         }
 
         const newProject = new Project({
@@ -238,17 +238,27 @@ const enhanceDescription = async (req, res) => {
             });
         }
 
+        if (text.length > 250) {
+            return res.status(400).json({
+                success: false,
+                message: "Description cannot exceed 250 characters.",
+            });
+        }
+
         const completion = await groq.chat.completions.create({
             model: "llama-3.3-70b-versatile",
             messages: [
                 {
                     role: "user",
-                    content: `Rewrite the following project description in a clearer, more professional, and grammatically correct way.
-Output ONLY the improved description. 
-Do NOT add explanations, bullet points, or any extra text.
+                    content: `Rewrite the following project description to make it clearer, more professional, and grammatically correct. 
+Do NOT remove any important details or meaning. 
+You may add small relevant clarifications if needed, but do NOT shorten the description unnecessarily.
+The rewritten version MUST stay under 250 characters.
+Output ONLY the improved description, nothing else.
 
 Text:
-"${text}"`
+"${text}"
+`
                 }
             ]
         });
@@ -268,6 +278,7 @@ Text:
         });
     }
 };
+
 
 
 
