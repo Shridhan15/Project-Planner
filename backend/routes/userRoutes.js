@@ -11,7 +11,7 @@ userRouter.post('/login', loginValidator, loginUser);
 userRouter.get('/profile', authUser, fetchUserProfile)
 userRouter.put('/update-profile', authUser, upload.single('profileImage'), updateProfile);
 userRouter.get('/user-projects', authUser, getUserProjects);
-userRouter.get('/author/:id', authUser, getAuthorProfile);
+userRouter.get('/author/:id', getAuthorProfile);
 userRouter.get('/me', authUser, getMe)
 userRouter.post('/send-support', Support);
 userRouter.get('/join-requests', authUser, getJoinRequests);

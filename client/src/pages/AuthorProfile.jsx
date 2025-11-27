@@ -3,9 +3,11 @@ import { ProjectContext } from "../../context/ProjectContext";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { assets } from "../assets/assets";
+import { toast } from "react-toastify";
 
 const AuthorProfile = () => {
-  const { backendUrl, token, projectsData } = useContext(ProjectContext);
+  const { backendUrl, token, projectsData, userProfile } =
+    useContext(ProjectContext);
   const { authorId } = useParams();
   const [authorProfile, setAuthorProfile] = useState(null);
   const [authorProjects, setAuthorProjects] = useState([]);
@@ -45,8 +47,16 @@ const AuthorProfile = () => {
   }, [authorId]);
 
   const handleSendMessage = () => {
+    if (!token || !userProfile) {
+      toast.error("Please log in to start messaging.");
+      return;
+    }
+
     navigate("/messages", {
-      state: { authorId: authorProfile._id, authorName: authorProfile.name },
+      state: {
+        authorId: authorProfile._id,
+        authorName: authorProfile.name,
+      },
     });
   };
 

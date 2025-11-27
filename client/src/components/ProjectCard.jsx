@@ -178,10 +178,10 @@ const ProjectCard = ({ project }) => {
           <p className="text-sm text-gray-400">
             Posted by:{" "}
             <Link
-              to={`/author/${project.author._id}`}
+              to={`/author/${project?.author?._id}`}
               className="text-violet-400 hover:text-violet-300 hover:underline font-medium transition"
             >
-              {project.author.name}
+              {project?.author?.name}
             </Link>
           </p>
         )}
