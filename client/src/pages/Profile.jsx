@@ -140,7 +140,7 @@ const Profile = () => {
                 Edit
               </button>
 
-              <button
+              {/* <button
                 onClick={handleDelete}
                 className="cursor-pointer px-6 py-2 rounded-lg
   bg-gradient-to-r from-red-600 to-red-500
@@ -151,7 +151,7 @@ const Profile = () => {
   active:scale-95 transition-all duration-200"
               >
                 Delete Account
-              </button>
+              </button> */}
             </div>
           </div>
 

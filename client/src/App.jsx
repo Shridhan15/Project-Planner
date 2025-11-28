@@ -20,13 +20,21 @@ const App = () => {
     useContext(ProjectContext);
 
   return (
-   <div
-  className="flex flex-col min-h-screen 
+    <div
+      className="flex flex-col min-h-screen 
   bg-gradient-to-br from-slate-700 via-slate-900 to-violet-900/30 
   text-gray-100 transition-colors duration-300"
->
+    >
       <ToastContainer />
       <Navbar />
+      <div
+        className="w-full bg-gradient-to-r from-purple-600 via-indigo-700 to-purple-600  mt-16
+                text-white py-2 overflow-hidden"
+      >
+        <div className="flex whitespace-nowrap animate-[scroll_12s_linear_infinite]">
+          Demo Login → Email: amit@gmail.com | Password: amit1234
+        </div>
+      </div>
 
       <main className="flex-grow">
         <Routes>
